@@ -298,9 +298,109 @@ class Rec(unittest.TestResult):
         if e is not None: self._b(t.id())
     def addUnexpectedSuccess(self, t): self._b(t.id())
 
+def _adump(node):
+    if isinstance(node, ast.AST):
+        return ast.dump(node, include_attributes=False)
+    if isinstance(node, list):
+        return "[" + ",".join(_adump(item) for item in node) + "]"
+    return repr(node)
+
+
+def _literal_updates(old_src, new_src, rel):
+    """Class/module assigns whose only change is a literal, or None if the edit is wider.
+
+    A plain class (metaclass type) reads these attributes at call time. Expression's metaclass
+    copies its dict into the class object at creation, so those stay on the cold path.
+    """
+    try:
+        old_tree, new_tree = ast.parse(old_src), ast.parse(new_src)
+    except SyntaxError:
+        return None
+    old_lines, new_lines = old_src.splitlines(), new_src.splitlines()
+    if len(old_lines) != len(new_lines):
+        return None
+    spans = [
+        (node.lineno, node.end_lineno)
+        for node in ast.walk(old_tree)
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)) and node.end_lineno
+    ]
+    for lineno, (before, after) in enumerate(zip(old_lines, new_lines), start=1):
+        if before != after and any(start <= lineno <= end for start, end in spans):
+            return None
+    updates = []
+
+    def walk(old_body, new_body, qual):
+        if len(old_body) != len(new_body):
+            return False
+        for left, right in zip(old_body, new_body):
+            if isinstance(left, ast.ClassDef) or isinstance(right, ast.ClassDef):
+                if type(left) is not type(right) or left.name != right.name:
+                    return False
+                if _adump(left.bases) != _adump(right.bases):
+                    return False
+                nested = f"{qual}.{left.name}" if qual else left.name
+                if not walk(left.body, right.body, nested):
+                    return False
+                continue
+            if isinstance(left, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
+                # Body text is compared once, below. Dumping every function is slower than the probe it saves.
+                if left.name != right.name or left.lineno != right.lineno or left.end_lineno != right.end_lineno:
+                    return False
+                continue
+            if _adump(left) == _adump(right):
+                continue
+            target = _assigned_name(left)
+            if not target or target != _assigned_name(right):
+                return False
+            value_node = right.value if isinstance(right, (ast.Assign, ast.AnnAssign)) else None
+            old_node = left.value if isinstance(left, (ast.Assign, ast.AnnAssign)) else None
+            if value_node is None or old_node is None:
+                return False
+            try:
+                value = ast.literal_eval(value_node)
+                old_value = ast.literal_eval(old_node)
+            except (ValueError, SyntaxError):
+                return False
+            # Dict key sets are snapshotted when the class is created (escape formats). arg_types is
+            # re-derived into required_args in the child, so its keys may change.
+            if isinstance(value, dict) or isinstance(old_value, dict):
+                if not isinstance(value, dict) or not isinstance(old_value, dict):
+                    return False
+                if target != "arg_types" and set(value) != set(old_value):
+                    return False
+            updates.append((rel[:-3].replace("/", ".").removesuffix(".__init__"), qual, target, value))
+        return True
+
+    if not walk(old_tree.body, new_tree.body, ""):
+        return None
+    return updates
+
+
+def _assigned_name(node):
+    if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
+        return node.targets[0].id
+    if isinstance(node, ast.AnnAssign) and isinstance(node.target, ast.Name):
+        return node.target.id
+    return None
+
+
+def _plain_class(mod_name, qual):
+    if not qual:
+        return True
+    mod = sys.modules.get(mod_name)
+    if mod is None:
+        return False
+    obj = mod
+    for part in qual.split("."):
+        obj = getattr(obj, part, None)
+        if obj is None:
+            return False
+    return type(obj) is type
+
+
 def prepare(files):
     """Decide per file how to apply. Returns (mode, detail) mode in {'hot','cold'}. Runs in the parent (cheap)."""
-    hot = []; reasons = []
+    hot = []; reasons = []; consts = []
     for rel, text in files.items():
         ap = os.path.join(SRC, rel)
         if rel.endswith('.py'):
@@ -309,6 +409,12 @@ def prepare(files):
             if mod not in sys.modules: continue          # overlay handles it
             old = open(ap).read()
             pl = plan_swap(ap, old, text)
+            if pl == 'import-time change':
+                updates = _literal_updates(old, text, rel)
+                if updates is not None and all(_plain_class(mod_name, qual) for mod_name, qual, _attr, _value in updates):
+                    consts.extend(updates)
+                    continue
+                reasons.append(pl); continue
             if isinstance(pl, str): reasons.append(pl); continue
             idx = _funcidx()
             for q, l, nc in pl:
@@ -326,7 +432,7 @@ def prepare(files):
     bad = set()
     for k, (ex, op) in PRESET.items():
         if touched & ex or datas & op: bad.add(k)
-    return ('hot', hot, bad)
+    return ('hot', hot, bad, consts)
 
 def child(files, test_ids, plan, per_test_timeout, wfd, stop_on_fail):
     gc.enable()
@@ -337,6 +443,7 @@ def child(files, test_ids, plan, per_test_timeout, wfd, stop_on_fail):
         else: data[ap] = text
     mode, detail = plan[0], plan[1]
     stale = plan[2] if len(plan) > 2 else set(PRESET)
+    consts = plan[3] if len(plan) > 3 else ()
     if mode == 'cold':
         for m in list(sys.modules):
             if m == 'sqlglot' or m.startswith('sqlglot.') or m == 'tests' or m.startswith('tests.'): del sys.modules[m]
@@ -353,6 +460,20 @@ def child(files, test_ids, plan, per_test_timeout, wfd, stop_on_fail):
                     swapped.add(id(f))
         for i in swapped:   # drop memoised results of swapped functions
             for o in _LRU.get(i, []): o.cache_clear()
+        for mod_name, qual, attr, value in consts:
+            obj = sys.modules[mod_name]
+            for part in filter(None, qual.split(".")):
+                obj = getattr(obj, part)
+            setattr(obj, attr, value)
+            if attr == "arg_types" and isinstance(value, dict):
+                required = {key for key, flag in value.items() if flag}
+                obj.required_args = required
+                pending = list(obj.__subclasses__())
+                while pending:
+                    sub = pending.pop()
+                    pending.extend(sub.__subclasses__())
+                    if "arg_types" not in sub.__dict__:
+                        sub.required_args = set(required)
     if data:
         real_open = builtins.open
         def fake_open(file, mode='r', *a, **k):

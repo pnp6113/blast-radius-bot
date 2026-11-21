@@ -10,6 +10,7 @@ from __future__ import annotations
 import ast
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -128,7 +129,17 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
         result = fp.probe(files, [by[number]["id"] for number in numbers], plan)
         return {number for number in numbers if result.get(by[number]["id"]) != "pass"}
 
+    def _used():
+        try:
+            import resource
+            self_use = resource.getrusage(resource.RUSAGE_SELF)
+            child_use = resource.getrusage(resource.RUSAGE_CHILDREN)
+            return self_use.ru_utime + self_use.ru_stime + child_use.ru_utime + child_use.ru_stime
+        except ImportError:
+            return 0.0
+
     for commit, cand, files, parsed, notes in jobs:
+        tick = _used()
         kind = "fixture" if parsed and all(item["new"].startswith("tests/fixtures/") for item in parsed) else "code"
         cheap = sorted((number for number in cand if by[number]["seconds"] <= B), key=tcost)
         big = set(cand) - set(cheap)
@@ -153,7 +164,24 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
                 return (sum(tcost(number) for number in numbers) + OVH) if numbers else 0.0
 
             live_save = max(0.0, sim(cand) - min(sim({number}) for number in cand))
-            if not big and cpu_est(cheap) >= P_PASS[kind] * sim(cand) + (1 - P_PASS[kind]) * live_save:
+            ev_include = (not big) and cpu_est(cheap) >= P_PASS[kind] * sim(cand) + (1 - P_PASS[kind]) * live_save
+            # One fork when the set is small enough that a second fork costs more than the tests.
+            # This only replaces the staged probe. The include-all gate still skips the fork.
+            if not ev_include and cpu_est(cheap) <= 1.0:
+                failed = run(files, cheap, plan)
+                pending = bigcheap
+                fixed = failed | (big - set(bigcheap))
+                if not failed:
+                    sel, how = set(), "all-pass"
+                elif not pending:
+                    sel, how = fixed, "live"
+                else:
+                    marginal = sim(fixed | set(pending)) - sim(fixed)
+                    if LIVE_P * marginal <= cpu_est(pending):
+                        sel, how = fixed | set(pending), "live:incl"
+                    else:
+                        sel, how = fixed | run(files, pending, plan), "live:probe"
+            elif ev_include:
                 # A numeric change in a dialect file fans out to every user of that dialect. Probing the
                 # dialect's own test module is a couple of seconds; if those pass, the rest of the fan-out
                 # did not observe the new value. Including all of them is the 9 second commit.
@@ -195,7 +223,7 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
                     sel, how = set(), "all-pass(s1)"
         sel = sel | imp_fail
         line = f"p10: {how}{imp_note} cand={len(cand)} sel={len(sel)}"
-        print(f"{commit} {line} modes={dict(fp.STATS)}", file=sys.stderr, flush=True)
+        print(f"{commit} {line} cpu={_used() - tick:.2f} modes={dict(fp.STATS)}", file=sys.stderr, flush=True)
         out[commit] = (sorted(sel), False, [line, *_fmt(notes)])
     try:
         import resource
@@ -375,7 +403,16 @@ def _file_identity_noop(old: str, new: str, src: Path, rel: str) -> bool:
 
     if not walk(old_tree, new_tree, None) or not sites:
         return False
-    repo = _repo(src)
+    seeds = set()
+    for compare, class_q in sites:
+        if class_q:
+            seeds.add(class_q.rsplit(".", 1)[-1])
+        for node in (compare.left, *compare.comparators):
+            if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name):
+                seeds.add(node.value.id)
+            elif isinstance(node, ast.Name):
+                seeds.add(node.id)
+    repo = _repo(src, frozenset(seeds))
     return all(repo.site_ok(compare, class_q, local) for compare, class_q in sites)
 
 
@@ -404,12 +441,49 @@ def _bindings(tree: ast.AST, module: str) -> dict:
     return local
 
 
+_CLASS_HEAD = re.compile(r"^class\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(([^)]*)\))?\s*:", re.M)
+
+
 class _Repo:
-    def __init__(self, src: Path):
+    def __init__(self, src: Path, seeds: frozenset):
+        self.src = src
         self.classes: dict = {}
-        pending = []
+        self._missing: set = set()
+        self._parsed: set = set()
+        headers = []
         for path in (src / "sqlglot").rglob("*.py"):
             module = path.relative_to(src).with_suffix("").as_posix().replace("/", ".")
+            try:
+                text = path.read_text(encoding="utf-8")
+            except OSError:
+                continue
+            for match in _CLASS_HEAD.finditer(text):
+                bases = []
+                for part in (match.group(2) or "").split(","):
+                    part = part.strip()
+                    if not part or "=" in part:
+                        continue
+                    bases.append(part.split(".")[-1].split("[")[0])
+                headers.append((match.group(1), bases, path, module))
+        wanted = {name for name in seeds if name}
+        changed = True
+        while changed:
+            changed = False
+            for name, bases, _path, _module in headers:
+                if name in wanted:
+                    for base in bases:
+                        if base not in wanted:
+                            wanted.add(base)
+                            changed = True
+                elif any(base in wanted for base in bases):
+                    wanted.add(name)
+                    changed = True
+        pending = []
+        seen_paths = set()
+        for name, _bases, path, module in headers:
+            if name not in wanted or path in seen_paths:
+                continue
+            seen_paths.add(path)
             try:
                 tree = ast.parse(path.read_text(encoding="utf-8"))
             except SyntaxError:
@@ -491,9 +565,35 @@ class _Repo:
             return None
         return qname
 
+    def _ensure(self, qname: str) -> None:
+        if qname in self.classes or qname in self._missing:
+            return
+        parts = qname.split(".")
+        for cut in range(len(parts) - 1, 0, -1):
+            path = self.src.joinpath(*parts[:cut]).with_suffix(".py")
+            if path.is_file():
+                self._parse_path(path)
+                return
+        self._missing.add(qname)
+
+    def _parse_path(self, path: Path) -> None:
+        if path in self._parsed:
+            return
+        self._parsed.add(path)
+        module = path.relative_to(self.src).with_suffix("").as_posix().replace("/", ".")
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+        except (OSError, SyntaxError):
+            return
+        local = _bindings(tree, module)
+        for node in tree.body:
+            if isinstance(node, ast.ClassDef):
+                self.classes[f"{module}.{node.name}"] = self._class(node, local)
+
     def _is_enum(self, qname: str, seen=None) -> bool:
         if qname in ("enum.Enum", "enum.IntEnum", "enum.StrEnum", "enum.Flag"):
             return True
+        self._ensure(qname)
         info = self.classes.get(qname)
         if not info:
             return False
@@ -655,6 +755,7 @@ class _Repo:
     def _identity_eq(self, qname: str, seen=None) -> bool:
         if qname in ("None", "object"):
             return True
+        self._ensure(qname)
         info = self.classes.get(qname)
         if not info or info["has_eq"]:
             return False
@@ -739,11 +840,11 @@ def _expr_types(expr, env: dict, self_types: dict):
     return None
 
 
-def _repo(src: Path) -> _Repo:
-    key = str(src)
+def _repo(src: Path, seeds: frozenset) -> _Repo:
+    key = (str(src), seeds)
     repo = _REPO.get(key)
     if repo is None:
-        repo = _Repo(src)
+        repo = _Repo(src, seeds)
         _REPO[key] = repo
     return repo
 

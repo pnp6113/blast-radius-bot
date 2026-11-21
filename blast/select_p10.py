@@ -71,14 +71,34 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
             if not parsed or _unsafe(parsed, src, diff):
                 out[commit] = (every, True, ["p10: fallback unsafe diff"])
                 continue
+            if _changes_test_code(parsed):
+                out[commit] = (every, True, ["p10: fallback test code changed"])
+                continue
             cand, notes = eb.select(diff, "stmt+import")
             files = {}
             for item in parsed:
                 if item["new"] == "/dev/null":
                     continue
                 base = src / item["new"]
-                files[item["new"]] = eb.apply(base.read_text(encoding="utf-8"), item)
-            jobs.append((commit, set(cand), files, parsed, list(notes)))
+                try:
+                    if not base.is_file():
+                        out[commit] = (every, True, ["p10: fallback file missing"])
+                        break
+                    base_text = base.read_text(encoding="utf-8")
+                    patched = eb.apply(base_text, item)
+                    if item["new"].endswith(".py") and item["new"].startswith("sqlglot/"):
+                        if not _check_syntax(patched):
+                            out[commit] = (every, True, ["p10: fallback post-patch syntax error"])
+                            break
+                    files[item["new"]] = patched
+                except FileNotFoundError:
+                    out[commit] = (every, True, ["p10: fallback file not found"])
+                    break
+                except Exception as error:
+                    out[commit] = (every, True, [f"p10: fallback apply error {type(error).__name__}"])
+                    break
+            else:
+                jobs.append((commit, set(cand), files, parsed, list(notes)))
         except Exception as error:
             out[commit] = (every, True, [f"p10: fallback {type(error).__name__}"])
 
@@ -174,9 +194,9 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
                     if found:
                         sel, how = decide(found | (big - set(bigcheap)), bigcheap, "stage2-live")
                     else:
-                        sel, how = set(), "all-pass"
+                        sel, how = big - set(bigcheap), "all-pass"
                 else:
-                    sel, how = set(), "all-pass(s1)"
+                    sel, how = big - set(bigcheap), "all-pass(s1)"
         sel = sel | imp_fail
         line = f"p10: {how}{imp_note} cand={len(cand)} sel={len(sel)}"
         print(f"{commit} {line} modes={dict(fp.STATS)}", file=sys.stderr, flush=True)
@@ -191,10 +211,33 @@ def _fmt(notes) -> list[str]:
     return pretty
 
 
+def _check_syntax(code: str) -> bool:
+    """Check if Python code compiles without syntax errors."""
+    try:
+        compile(code, "<patch>", "exec")
+        return True
+    except SyntaxError:
+        return False
+
+
+def _changes_test_code(parsed) -> bool:
+    """Check if any test files or conftest are modified."""
+    for item in parsed:
+        path = item.get("new") or item.get("old") or ""
+        if path.startswith("tests/") and path.endswith(".py"):
+            return True
+        if "conftest" in path:
+            return True
+    return False
+
+
 def _unsafe(parsed, src: Path, diff: str) -> bool:
     if "GIT binary patch" in diff or diff.startswith("Binary files"):
         return True
     for item in parsed:
+        status = item.get("status", "M")
+        if status in ("A", "D", "R"):
+            return True
         if item["old"] == "/dev/null" or item["new"] == "/dev/null":
             return True
         path = item["new"]

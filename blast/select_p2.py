@@ -107,7 +107,7 @@ def select_p2(diff: str, tests: list[dict]) -> tuple[list[int], bool, list[str]]
             sel, how = must | run(rest), "live: probe rest"
     elif rest:
         f2 = run(rest)
-        sel, how = (f2 | failed | big, "stage2 live") if f2 else (set(), "all pass")
+        sel, how = (f2 | failed | big, "stage2 live") if f2 else (big, "all pass")
     else:
         sel, how = must, "stage1 only"
     return sorted(sel), False, notes + [f"p2: {how} cand={len(cand)} sel={len(sel)}"]

@@ -71,13 +71,19 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
             if not parsed or _unsafe(parsed, src, diff):
                 out[commit] = (every, True, ["p10: fallback unsafe diff"])
                 continue
-            cand, notes = eb.select(diff, "stmt+import")
             files = {}
             for item in parsed:
                 if item["new"] == "/dev/null":
                     continue
                 base = src / item["new"]
                 files[item["new"]] = eb.apply(base.read_text(encoding="utf-8"), item)
+            if _identity_noop(parsed, src, files):
+                # is/== (or is not/!=) where every stored value makes the two operators agree.
+                # Probing that commit only spends CPU; the schedule stays empty.
+                print(f"{commit} p10: identity-noop", file=sys.stderr, flush=True)
+                out[commit] = ([], False, ["p10: identity-noop"])
+                continue
+            cand, notes = eb.select(diff, "stmt+import")
             jobs.append((commit, set(cand), files, parsed, list(notes)))
         except Exception as error:
             out[commit] = (every, True, [f"p10: fallback {type(error).__name__}"])
@@ -191,6 +197,14 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
         line = f"p10: {how}{imp_note} cand={len(cand)} sel={len(sel)}"
         print(f"{commit} {line} modes={dict(fp.STATS)}", file=sys.stderr, flush=True)
         out[commit] = (sorted(sel), False, [line, *_fmt(notes)])
+    try:
+        import resource
+        self_use = resource.getrusage(resource.RUSAGE_SELF)
+        child_use = resource.getrusage(resource.RUSAGE_CHILDREN)
+        cpu = self_use.ru_utime + self_use.ru_stime + child_use.ru_utime + child_use.ru_stime
+        print(f"CPU {cpu:.3f}", file=sys.stderr, flush=True)
+    except ImportError:
+        pass
     return out
 
 
@@ -289,6 +303,449 @@ def _numeric_constants_only(old: str, new: str) -> bool:
     if not changed:
         return False
     return ast.dump(_BlankConsts().visit(old_tree)) == ast.dump(_BlankConsts().visit(new_tree))
+
+
+_CMP_PAIRS = {
+    (ast.Is, ast.Eq),
+    (ast.Eq, ast.Is),
+    (ast.IsNot, ast.NotEq),
+    (ast.NotEq, ast.IsNot),
+}
+_REPO: dict = {}
+
+
+def _identity_noop(parsed, src: Path, files: dict) -> bool:
+    """True when every edit is an identity/equality swap that cannot change a result.
+
+    `x is Enum.MEMBER` and `x == Enum.MEMBER` agree when x is always a member.
+    `x is None` and `x == None` agree when x is always None or an instance whose
+    class uses identity equality. Anything else keeps the probe.
+    """
+    try:
+        if not parsed:
+            return False
+        for item in parsed:
+            path = item["new"]
+            if not path.endswith(".py") or not path.startswith("sqlglot/") or path not in files:
+                return False
+            old = (src / path).read_text(encoding="utf-8")
+            if not _file_identity_noop(old, files[path], src, path):
+                return False
+        return True
+    except Exception:
+        return False
+
+
+def _file_identity_noop(old: str, new: str, src: Path, rel: str) -> bool:
+    old_tree, new_tree = ast.parse(old), ast.parse(new)
+    module = rel[:-3].replace("/", ".")
+    local = _bindings(old_tree, module)
+    sites: list = []
+
+    def walk(left, right, class_q):
+        if isinstance(left, ast.ClassDef) and isinstance(right, ast.ClassDef):
+            if left.name != right.name or len(left.body) != len(right.body):
+                return False
+            if _dump(left.bases) != _dump(right.bases) or _dump(left.decorator_list) != _dump(right.decorator_list):
+                return False
+            qname = local.get(left.name, f"{module}.{left.name}")
+            return all(walk(a, b, qname) for a, b in zip(left.body, right.body))
+        if isinstance(left, ast.Compare) and isinstance(right, ast.Compare):
+            if (
+                len(left.ops) == 1
+                and len(right.ops) == 1
+                and type(left.ops[0]) is not type(right.ops[0])
+            ):
+                if (type(left.ops[0]), type(right.ops[0])) not in _CMP_PAIRS:
+                    return False
+                if _dump(left.left) != _dump(right.left) or _dump(left.comparators) != _dump(right.comparators):
+                    return False
+                sites.append((left, class_q))
+                return True
+        if type(left) is not type(right):
+            return False
+        if isinstance(left, ast.AST):
+            for (name_l, value_l), (name_r, value_r) in zip(ast.iter_fields(left), ast.iter_fields(right), strict=True):
+                if name_l != name_r or not walk(value_l, value_r, class_q):
+                    return False
+            return True
+        if isinstance(left, list):
+            return len(left) == len(right) and all(walk(a, b, class_q) for a, b in zip(left, right))
+        return left == right
+
+    if not walk(old_tree, new_tree, None) or not sites:
+        return False
+    repo = _repo(src)
+    return all(repo.site_ok(compare, class_q, local) for compare, class_q in sites)
+
+
+def _dump(node) -> str:
+    if isinstance(node, ast.AST):
+        return ast.dump(node, include_attributes=False)
+    if isinstance(node, list):
+        return "[" + ",".join(_dump(item) for item in node) + "]"
+    return repr(node)
+
+
+def _bindings(tree: ast.AST, module: str) -> dict:
+    local: dict = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module is not None:
+            parts = module.split(".")
+            if node.level:
+                parts = parts[: len(parts) - node.level]
+            base = ".".join([*parts, *node.module.split(".")] if node.level else [node.module])
+            for alias in node.names:
+                if alias.name == "*":
+                    continue
+                local[alias.asname or alias.name] = f"{base}.{alias.name}"
+        elif isinstance(node, ast.ClassDef):
+            local[node.name] = f"{module}.{node.name}"
+    return local
+
+
+class _Repo:
+    def __init__(self, src: Path):
+        self.classes: dict = {}
+        pending = []
+        for path in (src / "sqlglot").rglob("*.py"):
+            module = path.relative_to(src).with_suffix("").as_posix().replace("/", ".")
+            try:
+                tree = ast.parse(path.read_text(encoding="utf-8"))
+            except SyntaxError:
+                continue
+            local = _bindings(tree, module)
+            for node in tree.body:
+                if isinstance(node, ast.ClassDef):
+                    pending.append((node, local, module))
+        for node, local, module in pending:
+            self.classes[f"{module}.{node.name}"] = self._class(node, local)
+
+    def _class(self, node: ast.ClassDef, local: dict) -> dict:
+        bases = []
+        for base in node.bases:
+            if isinstance(base, ast.Name):
+                bases.append(local.get(base.id, base.id))
+            else:
+                bases.append("UNKNOWN")
+        class_assigns: dict = {}
+        self_assigns: dict = {}
+        has_eq = False
+        for stmt in node.body:
+            if isinstance(stmt, ast.ClassDef):
+                continue
+            if isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                if stmt.name in ("__eq__", "__ne__"):
+                    has_eq = True
+                for sub in ast.walk(stmt):
+                    if isinstance(sub, ast.Assign):
+                        for target in sub.targets:
+                            attr = _self_attr(target)
+                            if attr:
+                                self_assigns.setdefault(attr, []).append((stmt, sub.value, None))
+                    elif isinstance(sub, ast.AnnAssign):
+                        attr = _self_attr(sub.target)
+                        if attr:
+                            self_assigns.setdefault(attr, []).append((stmt, sub.value, sub.annotation))
+            elif isinstance(stmt, ast.Assign):
+                for target in stmt.targets:
+                    if isinstance(target, ast.Name):
+                        class_assigns[target.id] = stmt.value
+            elif isinstance(stmt, ast.AnnAssign) and isinstance(stmt.target, ast.Name):
+                class_assigns[stmt.target.id] = stmt.value
+        return {
+            "bases": bases,
+            "local": local,
+            "class_assigns": class_assigns,
+            "self_assigns": self_assigns,
+            "has_eq": has_eq,
+        }
+
+    def site_ok(self, compare: ast.Compare, class_q, local: dict) -> bool:
+        if len(compare.comparators) != 1:
+            return False
+        sides = [compare.left, compare.comparators[0]]
+        if any(_is_none(side) for side in sides):
+            other = sides[1] if _is_none(sides[0]) else sides[0]
+            attr = _self_attr(other)
+            return bool(attr and class_q and self._none_safe(class_q, attr))
+        enum_q = None
+        attr = None
+        for side in sides:
+            found = self._enum_member(side, local)
+            if found:
+                enum_q = found
+            name = _self_attr(side)
+            if name:
+                attr = name
+        if enum_q and attr and class_q:
+            return self._enum_safe(class_q, attr, enum_q)
+        members = [self._enum_member(side, local) for side in sides]
+        return bool(members[0] and members[1] and members[0] == members[1])
+
+    def _enum_member(self, node, local: dict):
+        if not isinstance(node, ast.Attribute) or not isinstance(node.value, ast.Name):
+            return None
+        qname = local.get(node.value.id)
+        if not qname or not self._is_enum(qname) or node.attr not in self.classes.get(qname, {}).get("class_assigns", {}):
+            return None
+        return qname
+
+    def _is_enum(self, qname: str, seen=None) -> bool:
+        if qname in ("enum.Enum", "enum.IntEnum", "enum.StrEnum", "enum.Flag"):
+            return True
+        info = self.classes.get(qname)
+        if not info:
+            return False
+        seen = set() if seen is None else seen
+        if qname in seen:
+            return False
+        seen.add(qname)
+        return any(self._is_enum(base, seen) for base in info["bases"])
+
+    def _enum_safe(self, class_q: str, attr: str, enum_q: str) -> bool:
+        group = self._family(class_q)
+        saw = False
+        for qname in group:
+            info = self.classes.get(qname)
+            if not info:
+                return False
+            for _func, value, _ann in info["self_assigns"].get(attr, ()):
+                saw = True
+                if value is None or not self._member_expr(value, info["local"], qname, enum_q):
+                    return False
+        return saw
+
+    def _member_expr(self, expr, local: dict, class_q: str, enum_q: str) -> bool:
+        if isinstance(expr, ast.Call) and self._resolve_name(expr.func, local) == enum_q:
+            return True
+        if isinstance(expr, ast.Attribute) and isinstance(expr.value, ast.Name):
+            if expr.value.id == "self":
+                return self._classvars_are_members(class_q, expr.attr, enum_q)
+            if local.get(expr.value.id) == enum_q and expr.attr in self.classes[enum_q]["class_assigns"]:
+                return True
+        return False
+
+    def _classvars_are_members(self, class_q: str, name: str, enum_q: str) -> bool:
+        for qname in self._family(class_q):
+            found = self._classvar(qname, name)
+            if found is None:
+                return False
+            value, local = found
+            if not self._direct_member(value, local, enum_q):
+                return False
+        return True
+
+    def _direct_member(self, expr, local: dict, enum_q: str) -> bool:
+        if isinstance(expr, ast.Call) and self._resolve_name(expr.func, local) == enum_q:
+            return True
+        if (
+            isinstance(expr, ast.Attribute)
+            and isinstance(expr.value, ast.Name)
+            and local.get(expr.value.id) == enum_q
+            and expr.attr in self.classes.get(enum_q, {}).get("class_assigns", {})
+        ):
+            return True
+        return False
+
+    def _classvar(self, qname: str, name: str, seen=None):
+        info = self.classes.get(qname)
+        if not info:
+            return None
+        if name in info["class_assigns"]:
+            return info["class_assigns"][name], info["local"]
+        seen = set() if seen is None else seen
+        if qname in seen:
+            return None
+        seen.add(qname)
+        for base in info["bases"]:
+            found = self._classvar(base, name, seen)
+            if found:
+                return found
+        return None
+
+    def _family(self, class_q: str) -> list:
+        return [class_q, *self._ancestors(class_q), *self._descendants(class_q)]
+
+    def _ancestors(self, qname: str, seen=None) -> list:
+        info = self.classes.get(qname)
+        if not info:
+            return []
+        seen = set() if seen is None else seen
+        out = []
+        for base in info["bases"]:
+            if base in seen or base not in self.classes:
+                continue
+            seen.add(base)
+            out.append(base)
+            out.extend(self._ancestors(base, seen))
+        return out
+
+    def _descendants(self, ancestor: str) -> list:
+        return [qname for qname in self.classes if qname != ancestor and self._inherits(qname, ancestor)]
+
+    def _inherits(self, qname: str, ancestor: str, seen=None) -> bool:
+        info = self.classes.get(qname)
+        if not info:
+            return False
+        seen = set() if seen is None else seen
+        if qname in seen:
+            return False
+        seen.add(qname)
+        for base in info["bases"]:
+            if base == ancestor or self._inherits(base, ancestor, seen):
+                return True
+        return False
+
+    def _none_safe(self, class_q: str, attr: str) -> bool:
+        group = [class_q, *self._descendants(class_q)]
+        tracked = []
+        others = []
+        for qname in group:
+            info = self.classes.get(qname)
+            if not info:
+                return False
+            for name, entries in info["self_assigns"].items():
+                for func, value, ann in entries:
+                    bucket = tracked if name == attr else others
+                    bucket.append((info, func, name, value, ann))
+        if not tracked:
+            return False
+        self_types: dict = {}
+        for info, _func, name, _value, ann in [*tracked, *others]:
+            if ann is None:
+                continue
+            parsed = _ann_types(ann, info["local"])
+            if name == attr and (not parsed or not self._atoms_identity(parsed)):
+                return False
+            if parsed:
+                self_types[name] = parsed
+        for _ in range(len(tracked) + len(others) + 2):
+            progressed = False
+            for info, func, name, value, _ann in [*others, *tracked]:
+                if value is None:
+                    continue
+                got = _expr_types(value, _arg_types(func, info["local"]), self_types)
+                if not got or got == self_types.get(name):
+                    continue
+                self_types[name] = got if name not in self_types else self_types[name] | got
+                progressed = True
+            if not progressed:
+                break
+        for info, func, _name, value, ann in tracked:
+            if value is None:
+                if ann is None:
+                    return False
+                continue
+            got = _expr_types(value, _arg_types(func, info["local"]), self_types)
+            if not got or not self._atoms_identity(got):
+                return False
+        return True
+
+    def _atoms_identity(self, tags: set) -> bool:
+        if not tags:
+            return False
+        for kind, payload in tags:
+            if kind != "atom":
+                return False
+            if payload != "None" and not self._identity_eq(payload):
+                return False
+        return True
+
+    def _identity_eq(self, qname: str, seen=None) -> bool:
+        if qname in ("None", "object"):
+            return True
+        info = self.classes.get(qname)
+        if not info or info["has_eq"]:
+            return False
+        seen = set() if seen is None else seen
+        if qname in seen:
+            return False
+        seen.add(qname)
+        return all(base == "object" or self._identity_eq(base, seen) for base in info["bases"])
+
+    def _resolve_name(self, node, local: dict):
+        if isinstance(node, ast.Name):
+            return local.get(node.id)
+        return None
+
+
+def _self_attr(node) -> str | None:
+    if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name) and node.value.id == "self":
+        return node.attr
+    return None
+
+
+def _is_none(node) -> bool:
+    return isinstance(node, ast.Constant) and node.value is None
+
+
+def _ann_types(node, local: dict):
+    if isinstance(node, ast.Constant) and node.value is None:
+        return {("atom", "None")}
+    if isinstance(node, ast.Name):
+        if node.id == "None":
+            return {("atom", "None")}
+        qname = local.get(node.id)
+        return {("atom", qname)} if qname else None
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+        left, right = _ann_types(node.left, local), _ann_types(node.right, local)
+        if left is None or right is None:
+            return None
+        return left | right
+    if isinstance(node, ast.Subscript) and isinstance(node.value, ast.Name) and node.value.id in ("dict", "Dict"):
+        slice_node = node.slice
+        if isinstance(slice_node, ast.Tuple) and len(slice_node.elts) == 2:
+            value = _ann_types(slice_node.elts[1], local)
+            return {("dict", frozenset(value))} if value else None
+    return None
+
+
+def _arg_types(func, local: dict) -> dict:
+    env = {}
+    if func is None:
+        return env
+    for arg in [*func.args.args, *func.args.posonlyargs, *func.args.kwonlyargs]:
+        if arg.annotation:
+            parsed = _ann_types(arg.annotation, local)
+            if parsed:
+                env[arg.arg] = parsed
+    return env
+
+
+def _expr_types(expr, env: dict, self_types: dict):
+    if isinstance(expr, ast.Constant) and expr.value is None:
+        return {("atom", "None")}
+    if isinstance(expr, ast.Name):
+        return env.get(expr.id)
+    if _self_attr(expr):
+        return self_types.get(expr.attr)
+    if isinstance(expr, ast.Call):
+        func = expr.func
+        if isinstance(func, ast.Attribute) and func.attr == "values" and not expr.args:
+            inner = _expr_types(func.value, env, self_types)
+            if not inner:
+                return None
+            out: set = set()
+            for kind, payload in inner:
+                if kind != "dict":
+                    return None
+                out |= set(payload)
+            return out
+        if isinstance(func, ast.Name) and func.id == "list" and len(expr.args) == 1:
+            return _expr_types(expr.args[0], env, self_types)
+    if isinstance(expr, ast.Subscript) and isinstance(expr.slice, ast.Constant) and type(expr.slice.value) is int:
+        return _expr_types(expr.value, env, self_types)
+    return None
+
+
+def _repo(src: Path) -> _Repo:
+    key = str(src)
+    repo = _REPO.get(key)
+    if repo is None:
+        repo = _Repo(src)
+        _REPO[key] = repo
+    return repo
 
 
 def _import_failures(files, src, eb, it, fp, reverse, by):

@@ -65,6 +65,7 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
         traceback.print_exc(file=sys.stderr)
         return {commit: (every, True, [f"p10: setup failed ({type(error).__name__}: {error})"]) for commit, _ in diffs}
 
+    _KEYIDX_IDS_OK[0] = _keyidx_ids_match(tests)
     src = eb.src
     jobs = []
     out = {}
@@ -393,6 +394,24 @@ def _package_walk_tests(parsed, src: Path, tests) -> set:
     return hits
 
 
+_KEYIDX_IDS_OK = [False]
+
+
+def _keyidx_ids_match(tests) -> bool:
+    """The key map stores test numbers recorded against the build-time tests.json; use it only when the run's
+    tests.json gives every recorded number the same node id."""
+    idx = os.environ.get("BR_KEYIDX", "")
+    try:
+        import pickle
+
+        with open(os.path.join(idx, "_ids.pkl"), "rb") as handle:
+            ids = pickle.load(handle)
+        now = {test["number"]: test["id"] for test in tests}
+        return bool(ids) and all(now.get(number) == node for number, node in ids.items())
+    except Exception:
+        return False
+
+
 def _dict_narrow(parsed, files, src, cand, notes):
     """Key-level narrowing for edits confined to entries of class-level dict literals (build-time key read map,
     research/ethan-p10/code/dictnarrow.py). Out-of-scope dict edits get every test that read the dict at test time
@@ -400,7 +419,7 @@ def _dict_narrow(parsed, files, src, cand, notes):
     if os.environ.get("BLAST_DICTN", "1") != "1":
         return cand
     idx = os.environ.get("BR_KEYIDX", "")
-    if not idx or not os.path.isfile(os.path.join(idx, "_meta.pkl")):
+    if not idx or not os.path.isfile(os.path.join(idx, "_meta.pkl")) or not _KEYIDX_IDS_OK[0]:
         return cand
     py = [item for item in parsed if item["new"] == item["old"] and item["new"].startswith("sqlglot/")
           and item["new"].endswith(".py") and item["new"] in files]

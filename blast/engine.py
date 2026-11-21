@@ -34,6 +34,10 @@ def plan_batch(
     scheduler: str = "starter",
     worker_count: int = 3,
 ) -> list[CommitPlan]:
+    if strategy == "p10":
+        from blast.select_p10 import plan_p10
+
+        return plan_p10(data_dir, scheduler, worker_count)
     tests = load_tests(data_dir / "tests.json")
     by_number = {test["number"]: test for test in tests}
     durations = durations_ms(tests)

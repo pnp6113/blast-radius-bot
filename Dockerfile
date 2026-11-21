@@ -21,20 +21,30 @@ WORKDIR /app
 COPY starter /app/starter
 COPY blast /app/blast
 COPY maps /app/maps
+COPY research/ethan-p10 /app/research/ethan-p10
 COPY selector.py /app/selector.py
 
-# Build the import-time name index once (build time is not charged), then make everything world-readable.
+# Build indexes and the probe preset cache once (build time is not charged).
 RUN PYTHONPATH=/app python -c "from blast.hybrid_index import Index; Index('/opt/sqlglot').save('/app/maps/hybrid/index.pkl')" \
+ && mkdir -p /opt/p10maps \
+ && python -c "import gzip, pathlib; pathlib.Path('/opt/p10maps/covmap_line.json').write_bytes(gzip.open('/app/maps/hybrid/covmap_line.json.gz','rb').read())" \
+ && cp /app/maps/hybrid/dialect_usage_map.json /app/maps/hybrid/file_reads_map.json /opt/p10maps/ \
+ && cp /app/research/ethan-p10/maps/import_graph.json /opt/p10maps/ \
+ && PYTHONPATH=/app BLAST_P10_ART=/opt/p10maps BLAST_SQLGLOT_SRC=/opt/sqlglot python -m blast.build_p10 \
  && python -m compileall -q /app/blast /app/starter /app/selector.py \
- && chmod -R a+rX /app /opt/sqlglot
+ && chmod -R a+rX /app /opt/sqlglot /opt/p10maps
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app \
     PYTHONDONTWRITEBYTECODE=1 \
     BLAST_SQLGLOT_SRC=/opt/sqlglot \
+    BLAST_P10_ART=/opt/p10maps \
+    BR_ARTIFACTS=/opt/p10maps \
+    BR_IDXCACHE=/opt/p10maps/idx_cache.pkl \
+    PRESET_CACHE=/opt/p10maps/preset_cache.pkl \
     SKIP_INTEGRATION=0 \
     OPENBLAS_NUM_THREADS=1 \
     OMP_NUM_THREADS=1 \
-    BLAST_STRATEGY=p2 \
+    BLAST_STRATEGY=p10 \
     BLAST_SCHEDULER=auto
 CMD ["python", "-u", "/app/selector.py"]

@@ -2,7 +2,9 @@
 
 Test selection for [sqlglot](https://github.com/tobymao/sqlglot) at commit `eb11aec4be8cb2122afe713a4816662c3f0fb2fa`. Lower simulated CI time wins. Missing a failing test costs 300 seconds. The rules are in [SCORING.md](SCORING.md). The original kit text is in [starter/README.md](starter/README.md).
 
-The image default is the **static hybrid** (`BLAST_STRATEGY=hybrid`): Ethan's statement-level coverage + import-time
+The image default is **P2** (`BLAST_STRATEGY=p2`): the static hybrid's candidates, then Ethan's cost-aware runtime probe
+(forked, in-memory patched sqlglot, class-grouped unittest; crash/timeout => fail; 55% wall budget then static).
+The static hybrid alone is `BLAST_STRATEGY=hybrid`: Ethan's statement-level coverage + import-time
 name analysis + dialect/class filters + fixture reads + AST-equal => nothing, ported in `blast/select_hybrid.py` and
 `blast/hybrid_index.py` with maps in `maps/hybrid/` (built from the pinned sqlglot commit only). Edits that cannot be
 analysed safely (unparseable, new/deleted/renamed/binary files, non-compiling modules, changed imports or removed
@@ -32,7 +34,8 @@ These are sample-set numbers from `score.py`. They are not a leaderboard score. 
 | Official starter, every test, 3 workers | 1210.470 s | 0 |
 | Every test, 4 workers | 1104.510 s | 0 |
 | Import map, automatic worker count | 482.337 s | 0 |
-| Static hybrid, automatic worker count (default) | 174.818 s | 0 (container CPU 1.2–1.3 s) |
+| Static hybrid, automatic worker count | 174.818 s | 0 (container CPU 1.2–1.3 s) |
+| P2 probe policy (default) | 119.933 s | 0 (container CPU 20.6–22.6 s, wall ~21 s) |
 
 ## Commands
 

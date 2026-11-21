@@ -35,6 +35,6 @@ ENV PYTHONUNBUFFERED=1 \
     SKIP_INTEGRATION=0 \
     OPENBLAS_NUM_THREADS=1 \
     OMP_NUM_THREADS=1 \
-    BLAST_STRATEGY=hybrid \
+    BLAST_STRATEGY=p2 \
     BLAST_SCHEDULER=auto
 CMD ["python", "-u", "/app/selector.py"]

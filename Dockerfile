@@ -12,6 +12,11 @@ tarfile.open(fileobj=io.BytesIO(data), mode='r:gz').extractall('/opt', filter='d
  && mv /opt/sqlglot-${SQLGLOT_COMMIT} /opt/sqlglot \
  && test -f /opt/sqlglot/sqlglot/__init__.py
 
+# Test dependencies for runtime probing (strategy p2): the official lock file, from PyPI only.
+COPY requirements.lock /tmp/requirements.lock
+RUN pip install --no-cache-dir -r /tmp/requirements.lock \
+ && python -m compileall -q /opt/sqlglot/sqlglot /opt/sqlglot/tests
+
 WORKDIR /app
 COPY starter /app/starter
 COPY blast /app/blast
@@ -27,6 +32,9 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app \
     PYTHONDONTWRITEBYTECODE=1 \
     BLAST_SQLGLOT_SRC=/opt/sqlglot \
+    SKIP_INTEGRATION=0 \
+    OPENBLAS_NUM_THREADS=1 \
+    OMP_NUM_THREADS=1 \
     BLAST_STRATEGY=hybrid \
     BLAST_SCHEDULER=auto
 CMD ["python", "-u", "/app/selector.py"]

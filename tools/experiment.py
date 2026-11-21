@@ -84,7 +84,7 @@ def main() -> int:
 
 
 def _add_strategy_args(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--strategy", default="all", choices=("all", "module", "imports", "hybrid"))
+    parser.add_argument("--strategy", default="all", choices=("all", "module", "imports", "hybrid", "p2"))
     parser.add_argument(
         "--scheduler",
         default="starter",

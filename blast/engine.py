@@ -15,6 +15,7 @@ from blast.schedule import assign
 from blast.select_imports import select_imports
 from blast.select_module import select_module
 from blast.select_hybrid import select_hybrid
+from blast.select_p2 import select_p2
 
 
 @dataclass
@@ -71,6 +72,8 @@ def _select(strategy: str, diff: str, tests: list[dict]) -> tuple[list[int], boo
         return select_imports(diff, tests)
     if strategy == "hybrid":
         return select_hybrid(diff, tests)
+    if strategy == "p2":
+        return select_p2(diff, tests)
     raise ValueError(f"unknown strategy {strategy}")
 
 

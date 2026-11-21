@@ -57,28 +57,63 @@ def main() -> None:
 
 
 def _build_extra() -> None:
-    """astindex.pkl (old-file AST facts) and keyidx/ (key-level dict read map). Separate processes: the key map
-    must be recorded with a clean interpreter whose class-creation hook is installed before sqlglot is imported."""
+    """Optional speed artifacts; the selector runs without any of them (each lookup falls back).
+    idfacts.pkl (class facts for the identity rule), astindex.pkl (old-file AST facts) and keyidx/ (key-level dict
+    read map). keyidx ships prebuilt as research/ethan-p10/code/keyidx.tgz (recorded from the pinned sqlglot with
+    build_keymap.py, seeds 0 and 12345, merged by build_keyidx.py), so the build does not rerun every test.
+    Set BLAST_KEYMAP_REBUILD=1 to record it again here (about 3-4 minutes on 4 cores)."""
+    import shutil
     import subprocess
+    import tarfile
 
     py = sys.executable
     sys.path.insert(0, str(ROOT))
-    from blast import select_p10
+    try:
+        from blast import select_p10
 
-    select_p10.build_id_facts(SRC, ART / "idfacts.pkl")
-    subprocess.run([py, str(CODE / "build_astindex.py"), str(SRC), str(ART / "astindex.pkl")], check=True)
-    tests_json = os.environ.get("BLAST_TESTS_JSON", str(ROOT / "sample" / "tests.json"))
-    seeds = os.environ.get("BLAST_KEYMAP_SEEDS", "0 12345").split()
-    workers = os.environ.get("BLAST_KEYMAP_WORKERS", str(os.cpu_count() or 4))
-    maps = []
-    for seed in seeds:
-        out = f"/tmp/keymap_{seed}.pkl"
-        env = dict(os.environ, PYTHONHASHSEED=seed)
-        subprocess.run([py, str(CODE / "build_keymap.py"), str(SRC), tests_json, out, workers], check=True, env=env)
-        maps.append(out)
-    subprocess.run([py, str(CODE / "build_keyidx.py"), str(ART / "keyidx"), *maps], check=True)
-    for out in maps:
-        os.remove(out)
+        select_p10.build_id_facts(SRC, ART / "idfacts.pkl")
+    except Exception as error:  # the identity rule parses at run time instead
+        print("idfacts skipped:", error, flush=True)
+    try:
+        subprocess.run([py, str(CODE / "build_astindex.py"), str(SRC), str(ART / "astindex.pkl")], check=True)
+    except Exception as error:
+        print("astindex skipped:", error, flush=True)
+    final = ART / "keyidx"
+    tmp = ART / "keyidx.tmp"
+    shutil.rmtree(tmp, ignore_errors=True)
+    try:
+        packed = CODE / "keyidx.tgz"
+        if packed.is_file() and os.environ.get("BLAST_KEYMAP_REBUILD", "0") != "1":
+            with tarfile.open(packed) as tar:
+                tar.extractall(tmp, filter="data")
+            inner = tmp / "keyidx"
+            if inner.is_dir():
+                tmp = inner
+        else:
+            tests_json = os.environ.get("BLAST_TESTS_JSON", str(ROOT / "sample" / "tests.json"))
+            seeds = os.environ.get("BLAST_KEYMAP_SEEDS", "0 12345").split()
+            workers = os.environ.get("BLAST_KEYMAP_WORKERS", str(os.cpu_count() or 4))
+            maps = []
+            for seed in seeds:
+                out = f"/tmp/keymap_{seed}.pkl"
+                env = dict(os.environ, PYTHONHASHSEED=seed)
+                subprocess.run([py, str(CODE / "build_keymap.py"), str(SRC), tests_json, out, workers], check=True, env=env)
+                maps.append(out)
+            subprocess.run([py, str(CODE / "build_keyidx.py"), str(tmp), *maps], check=True)
+            for out in maps:
+                os.remove(out)
+        if not (tmp / "_meta.pkl").is_file():
+            raise RuntimeError("keyidx has no _meta.pkl")
+        shutil.rmtree(final, ignore_errors=True)
+        os.replace(tmp, final)
+        os.chmod(final, 0o755)
+        for path in final.iterdir():
+            os.chmod(path, 0o644)
+        shutil.rmtree(ART / "keyidx.tmp", ignore_errors=True)
+        print("keyidx", final, len(list(final.iterdir())), "files", flush=True)
+    except Exception as error:  # dict narrowing turns itself off without _meta.pkl
+        print("keyidx skipped:", error, flush=True)
+        shutil.rmtree(ART / "keyidx.tmp", ignore_errors=True)
 
 
 if __name__ == "__main__":

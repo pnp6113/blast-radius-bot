@@ -1,0 +1,2 @@
+Unable to set __version__, run `pip install -e .` or `python setup.py develop` first.
+P3 B=2.0 ALPHA=1.0 SIMULATED=0.000s misses=0 static_wall=4.93s warm_cpu=0.62s self_cpu=7.25s children_cpu=153.98s modes={'hot': 34, 'cold': 23} wall=165.9s

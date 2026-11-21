@@ -1,0 +1,1 @@
+Unable to set __version__, run `pip install -e .` or `python setup.py develop` first.

@@ -1,0 +1,18 @@
+Unable to set __version__, run `pip install -e .` or `python setup.py develop` first.
+L4242_0000 code    cand=   2 sel=  2 truth=  2 cost=  3.996 probeCPU= 0.04 hot live:incl 
+L4242_0001 code    cand=   6 sel=  3 truth=  3 cost=  2.370 probeCPU= 0.12 hot live:incl 
+L4242_0002 code    cand=   4 sel=  3 truth=  3 cost=  5.061 probeCPU= 1.94 hot stage2-live 
+L4242_0003 code    cand= 293 sel=  2 truth=  2 cost=  2.447 probeCPU= 9.44 hot stage2-live:probe 
+L4242_0004 code    cand= 320 sel=  1 truth=  1 cost=  2.156 probeCPU= 9.26 hot stage2-live:probe 
+L4242_0005 code    cand=   1 sel=  1 truth=  1 cost=  2.662 probeCPU= 0.40 hot live 
+L4242_0006 code    cand= 294 sel=  0 truth=  0 cost=  0.000 probeCPU= 7.37 hot all-pass 
+L4242_0007 code    cand= 359 sel=  1 truth=  1 cost=  2.662 probeCPU= 8.36 hot stage2-live:probe 
+i2026_0000 code    cand= 150 sel=122 truth=  1 cost= 11.515 probeCPU= 0.20 cold live:incl import-probe:0mods/0t/0.02s 
+i2026_0001 code    cand=   1 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.65 cold all-pass(s1) import-probe:0mods/0t/0.24s 
+i2026_0002 code    cand=   2 sel=  2 truth=  2 cost=  2.041 probeCPU= 0.32 cold live import-probe:0mods/0t/0.22s 
+i2026_0003 code    cand= 186 sel=163 truth= 18 cost= 25.454 probeCPU= 0.39 cold live:incl import-probe:0mods/0t/0.22s 
+i2026_0004 code    cand= 171 sel=  1 truth=  1 cost=  2.007 probeCPU= 5.09 hot stage2-live:probe import-probe:0mods/0t/0.21s 
+i2026_0005 code    cand=  10 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.71 hot all-pass import-probe:0mods/0t/0.02s 
+i2026_0006 code    cand= 117 sel=  1 truth=  1 cost=  2.156 probeCPU= 3.70 hot stage2-live:probe import-probe:0mods/0t/0.02s 
+i2026_0007 code    cand= 319 sel=319 truth=  2 cost= 10.668 probeCPU= 0.02 hot include-all(EV) import-probe:0mods/0t/0.02s 
+i2026_0008 code    cand=   3 sel=  3 truth=  3 cost=  4.643 probeCPU= 0.03 hot live:incl 

@@ -1,0 +1,57 @@
+i8_0000 code    cand=  73 sel=  2 truth=  1 cost=  8.841 probeCPU= 3.55 hot stage2-live import-probe:0mods/0t 
+i8_0001 code    cand=  27 sel=  9 truth=  1 cost=  4.034 probeCPU= 0.52 cold live:incl-rest import-probe:0mods/0t 
+i8_0002 code    cand=  44 sel= 12 truth=  2 cost=  9.895 probeCPU= 0.40 hot live:incl-rest import-probe:0mods/0t 
+i8_0003 code    cand=1567 sel= 28 truth= 22 cost= 34.817 probeCPU=24.15 cold stage2-live import-probe:0mods/0t 
+i8_0004 code    cand=  13 sel=  0 truth=  0 cost=  0.000 probeCPU= 1.64 cold all-pass import-probe:0mods/0t 
+i8_0005 code    cand=  27 sel= 13 truth=  8 cost=  2.841 probeCPU= 0.52 cold live:incl-rest import-probe:0mods/0t 
+i8_0006 code    cand=  63 sel= 44 truth= 36 cost=  4.791 probeCPU= 0.49 cold live:incl-rest import-probe:0mods/0t 
+i8_0007 code    cand=  99 sel= 99 truth=  1 cost=  8.133 probeCPU= 0.20 cold include-all(EV) import-probe:0mods/0t 
+i8_0008 code    cand= 150 sel=  3 truth=  2 cost=  8.926 probeCPU= 6.49 cold stage2-live import-probe:0mods/0t 
+i8_0009 code    cand=  27 sel=  1 truth=  1 cost=  2.136 probeCPU= 3.86 hot stage2-live import-probe:0mods/0t 
+i8_0010 code    cand= 147 sel= 79 truth=  4 cost= 11.139 probeCPU= 1.52 hot live:incl-rest import-probe:0mods/0t 
+i8_0011 code    cand=  63 sel= 44 truth= 36 cost=  4.791 probeCPU= 0.48 cold live:incl-rest import-probe:0mods/0t 
+i8_0012 code    cand=  39 sel= 39 truth=  1 cost=  7.375 probeCPU= 0.21 cold include-all(EV) import-probe:0mods/0t 
+i8_0013 code    cand=   4 sel=  0 truth=  0 cost=  0.000 probeCPU= 2.06 cold all-pass import-probe:0mods/0t 
+i8_0014 code    cand=  12 sel=  5 truth=  2 cost=  3.466 probeCPU= 0.41 hot live:incl-rest import-probe:0mods/0t 
+i8_0015 code    cand=   4 sel=  2 truth=  1 cost=  2.818 probeCPU= 0.58 cold live:incl-rest import-probe:0mods/0t 
+i8_0016 code    cand= 171 sel=  0 truth=  0 cost=  0.000 probeCPU= 4.68 hot all-pass import-probe:0mods/0t 
+i8_0017 code    cand= 357 sel=  7 truth=  6 cost=  5.378 probeCPU=10.67 cold stage2-live import-probe:0mods/0t 
+i8_0018 code    cand=1522 sel=  7 truth=  1 cost= 34.817 probeCPU=24.45 cold stage2-live import-probe:0mods/0t 
+i8_0019 code    cand=1352 sel=  6 truth=  1 cost= 25.454 probeCPU=23.89 cold stage2-live import-probe:0mods/0t 
+i8_0020 code    cand=1352 sel=  6 truth=  1 cost= 25.454 probeCPU=24.46 cold stage2-live import-probe:0mods/0t 
+i8_0021 code    cand=   3 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.74 cold all-pass import-probe:0mods/0t 
+i8_0022 code    cand= 319 sel=319 truth=  2 cost= 10.668 probeCPU= 0.22 hot include-all(EV) import-probe:0mods/0t 
+i8_0023 code    cand=  15 sel=  6 truth=  3 cost=  2.725 probeCPU= 0.55 cold live:incl-rest import-probe:0mods/0t 
+i8_0024 code    cand=  15 sel= 11 truth=  3 cost=  4.925 probeCPU= 0.55 cold live:incl-rest import-probe:0mods/0t 
+i8_0025 code    cand= 437 sel=  5 truth=  1 cost= 25.454 probeCPU=15.79 cold stage2-live import-probe:0mods/0t 
+i8_0026 code    cand= 437 sel=  6 truth=  2 cost= 25.454 probeCPU=16.41 cold stage2-live import-probe:0mods/0t 
+i8_0027 code    cand= 205 sel=  3 truth=  1 cost= 25.454 probeCPU=16.29 cold stage2-live import-probe:0mods/0t 
+m100_0000 code    cand=  54 sel= 54 truth= 49 cost=  6.715 probeCPU= 0.00 hot include-all(EV) 
+m100_0001 code    cand=   1 sel=  1 truth=  1 cost=  2.001 probeCPU= 0.03 hot live:incl-rest 
+m100_0002 code    cand=  52 sel= 52 truth=  1 cost=  7.670 probeCPU= 0.29 cold include-all(EV) import-probe:0mods/0t 
+m100_0003 code    cand=   7 sel=  2 truth=  2 cost=  2.087 probeCPU= 0.19 hot live:incl-rest 
+m100_0004 code    cand=   4 sel=  4 truth=  4 cost=  4.969 probeCPU= 0.14 hot live:incl-rest 
+m100_0005 code    cand=  18 sel= 12 truth=  6 cost=  6.063 probeCPU= 1.37 hot live:incl-rest 
+m100_0006 code    cand=   9 sel=  3 truth=  3 cost=  4.425 probeCPU= 0.45 hot live:incl-rest import-probe:0mods/0t 
+m100_0007 code    cand= 107 sel=  2 truth=  1 cost=  8.731 probeCPU= 6.13 hot stage2-live import-probe:0mods/0t 
+m100_0008 code    cand=   2 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.04 hot all-pass(s1) 
+m100_0009 code    cand=  77 sel= 77 truth= 77 cost=  5.431 probeCPU= 0.16 hot live:incl-rest 
+m100_0010 code    cand=   7 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.79 hot all-pass 
+m100_0011 code    cand=   5 sel=  3 truth=  2 cost= 25.454 probeCPU= 1.92 hot stage2-live 
+m100_0012 code    cand=  49 sel= 49 truth=  4 cost=  7.682 probeCPU= 0.22 hot include-all(EV) import-probe:0mods/0t 
+m100_0013 code    cand=  24 sel=  7 truth=  3 cost= 10.686 probeCPU= 0.22 hot live:incl-rest 
+m100_0014 code    cand=  53 sel= 51 truth= 50 cost= 25.454 probeCPU= 1.55 hot live:incl-rest 
+m100_0015 code    cand=   2 sel=  2 truth=  2 cost=  2.248 probeCPU= 0.09 hot live:incl-rest 
+m100_0016 code    cand=  51 sel= 20 truth=  1 cost= 24.494 probeCPU= 1.38 hot live:incl-rest 
+m100_0017 code    cand=  36 sel= 35 truth= 33 cost= 25.454 probeCPU= 0.31 hot live:incl-rest 
+m100_0018 code    cand= 308 sel=  3 truth=  2 cost=  8.860 probeCPU= 9.87 cold stage2-live import-probe:0mods/0t 
+m100_0019 code    cand=  10 sel=  4 truth=  1 cost=  3.333 probeCPU= 0.40 hot live:incl-rest import-probe:0mods/0t 
+m100_0020 code    cand= 312 sel=  5 truth=  2 cost= 25.454 probeCPU=17.48 hot stage2-live 
+m100_0021 code    cand=   1 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.02 hot all-pass(s1) 
+m100_0022 code    cand=  15 sel= 15 truth= 15 cost=  4.331 probeCPU= 0.37 hot live:incl-rest 
+m100_0023 code    cand=  41 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.90 hot all-pass 
+m100_0024 code    cand=   8 sel=  2 truth=  1 cost=  3.410 probeCPU= 0.50 hot live:incl-rest import-probe:0mods/0t 
+m100_0025 code    cand=   1 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.08 hot all-pass(s1) 
+m100_0026 code    cand=  96 sel=  0 truth=  0 cost=  0.000 probeCPU= 4.13 hot all-pass 
+m100_0027 code    cand=   6 sel=  0 truth=  0 cost=  0.000 probeCPU= 1.77 hot all-pass 
+P5 B=2.0 ALPHA=1.0 SIMULATED=514.738s misses=0 static_wall=5.16s warm_cpu=0.60s self_cpu=10.75s children_cpu=236.56s modes={'import': 35, 'hot': 40, 'cold': 33} wall=244.1s

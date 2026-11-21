@@ -1,0 +1,85 @@
+Unable to set __version__, run `pip install -e .` or `python setup.py develop` first.
+i8_0000 code    cand=  73 sel=  2 truth=  1 cost=  8.841 probeCPU= 3.39 hot stage2-live import-probe:0mods/0t/0.02s 
+i8_0001 code    cand=  27 sel=  9 truth=  1 cost=  4.034 probeCPU= 0.37 cold live:incl-rest import-probe:0mods/0t/0.05s 
+i8_0002 code    cand=  44 sel= 12 truth=  2 cost=  9.895 probeCPU= 0.24 hot live:incl-rest import-probe:0mods/0t/0.02s 
+i8_0003 code    cand=1567 sel= 28 truth= 22 cost= 34.817 probeCPU=24.71 cold stage2-live import-probe:0mods/0t/0.22s 
+i8_0004 code    cand=  10 sel=  0 truth=  0 cost=  0.000 probeCPU= 1.09 cold all-pass import-probe:0mods/0t/0.22s 
+i8_0005 code    cand=  27 sel= 13 truth=  8 cost=  2.841 probeCPU= 0.49 cold live:incl-rest import-probe:0mods/0t/0.20s 
+i8_0006 code    cand=  63 sel= 44 truth= 36 cost=  4.791 probeCPU= 0.47 cold live:incl-rest import-probe:0mods/0t/0.20s 
+i8_0007 code    cand=  73 sel= 73 truth=  1 cost=  7.963 probeCPU= 0.04 cold include-all(EV) import-probe:0mods/0t/0.04s 
+i8_0008 code    cand= 150 sel=  3 truth=  2 cost=  8.926 probeCPU= 6.02 cold stage2-live import-probe:0mods/0t/0.02s 
+i8_0009 code    cand=  27 sel=  1 truth=  1 cost=  2.136 probeCPU= 3.88 hot stage2-live import-probe:0mods/0t/0.03s 
+i8_0010 code    cand= 143 sel= 75 truth=  4 cost= 10.905 probeCPU= 0.54 hot live:incl-rest import-probe:0mods/0t/0.03s 
+i8_0011 code    cand=  63 sel= 44 truth= 36 cost=  4.791 probeCPU= 1.06 cold live:incl-rest import-probe:0mods/0t/0.69s 
+i8_0012 code    cand=  39 sel= 39 truth=  1 cost=  7.375 probeCPU= 0.02 cold include-all(EV) import-probe:0mods/0t/0.02s 
+i8_0013 code    cand=1493 sel=  0 truth=  0 cost=  0.000 probeCPU=23.83 cold all-pass import-probe:0mods/0t/0.21s 
+i8_0014 code    cand=  13 sel=  5 truth=  2 cost=  3.466 probeCPU= 0.23 hot live:incl-rest import-probe:0mods/0t/0.01s 
+i8_0015 code    cand=   4 sel=  2 truth=  1 cost=  2.818 probeCPU= 0.62 cold live:incl-rest import-probe:0mods/0t/0.29s 
+i8_0016 code    cand= 171 sel=  0 truth=  0 cost=  0.000 probeCPU= 4.44 hot all-pass import-probe:0mods/0t/0.22s 
+i8_0017 code    cand= 353 sel=  7 truth=  6 cost=  5.378 probeCPU= 9.81 cold stage2-live import-probe:0mods/0t/0.04s 
+i8_0018 code    cand=1522 sel=  7 truth=  1 cost= 34.817 probeCPU=23.95 cold stage2-live import-probe:0mods/0t/0.28s 
+i8_0019 code    cand=1351 sel=  6 truth=  1 cost= 25.454 probeCPU=22.86 cold stage2-live import-probe:0mods/0t/0.27s 
+i8_0020 code    cand=1351 sel=  6 truth=  1 cost= 25.454 probeCPU=23.11 cold stage2-live import-probe:0mods/0t/0.28s 
+i8_0021 code    cand=   4 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.75 cold all-pass import-probe:0mods/0t/0.26s 
+i8_0022 code    cand= 319 sel=319 truth=  2 cost= 10.668 probeCPU= 0.02 hot include-all(EV) import-probe:0mods/0t/0.02s 
+i8_0023 code    cand=  15 sel=  6 truth=  3 cost=  2.725 probeCPU= 0.54 cold live:incl-rest import-probe:0mods/0t/0.23s 
+i8_0024 code    cand= 221 sel=  4 truth=  3 cost=  4.627 probeCPU= 9.95 cold stage2-live import-probe:0mods/0t/0.04s 
+i8_0025 code    cand= 437 sel=  5 truth=  1 cost= 25.454 probeCPU=15.47 cold stage2-live import-probe:0mods/0t/0.05s 
+i8_0026 code    cand= 437 sel=  6 truth=  2 cost= 25.454 probeCPU=16.03 cold stage2-live import-probe:0mods/0t/0.04s 
+i8_0027 code    cand= 205 sel=  3 truth=  1 cost= 25.454 probeCPU=16.20 cold stage2-live import-probe:0mods/0t/0.23s 
+m100_0000 code    cand=  54 sel= 54 truth= 49 cost=  6.715 probeCPU= 0.00 hot include-all(EV) 
+m100_0001 code    cand=   1 sel=  1 truth=  1 cost=  2.001 probeCPU= 0.03 hot live:incl-rest 
+m100_0002 code    cand=  52 sel= 52 truth=  1 cost=  7.670 probeCPU= 0.01 cold include-all(EV) import-probe:0mods/0t/0.01s 
+m100_0003 code    cand=   7 sel=  2 truth=  2 cost=  2.087 probeCPU= 0.20 hot live:incl-rest 
+m100_0004 code    cand=   4 sel=  4 truth=  4 cost=  4.969 probeCPU= 0.10 hot live:incl-rest 
+m100_0005 code    cand=  18 sel= 12 truth=  6 cost=  6.063 probeCPU= 0.30 hot live:incl-rest 
+m100_0006 code    cand=   9 sel=  3 truth=  3 cost=  4.425 probeCPU= 0.27 hot live:incl-rest import-probe:0mods/0t/0.02s 
+m100_0007 code    cand= 107 sel=  2 truth=  1 cost=  8.731 probeCPU= 5.70 hot stage2-live import-probe:0mods/0t/0.02s 
+m100_0008 code    cand=   2 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.06 hot all-pass(s1) 
+m100_0009 code    cand=  77 sel= 77 truth= 77 cost=  5.431 probeCPU= 0.45 hot live:incl-rest 
+m100_0010 code    cand=   7 sel=  0 truth=  0 cost=  0.000 probeCPU= 1.03 hot all-pass 
+m100_0011 code    cand=   5 sel=  3 truth=  2 cost= 25.454 probeCPU= 2.46 hot stage2-live 
+m100_0012 code    cand=  50 sel= 50 truth=  4 cost=  7.688 probeCPU= 0.03 hot include-all(EV) import-probe:0mods/0t/0.03s 
+m100_0013 code    cand=  24 sel=  7 truth=  3 cost= 10.686 probeCPU= 0.25 hot live:incl-rest 
+m100_0014 code    cand=  53 sel= 51 truth= 50 cost= 25.454 probeCPU= 0.16 hot live:incl-rest 
+m100_0015 code    cand=   2 sel=  2 truth=  2 cost=  2.248 probeCPU= 0.11 hot live:incl-rest 
+m100_0016 code    cand=  51 sel= 20 truth=  1 cost= 24.494 probeCPU= 0.27 hot live:incl-rest 
+m100_0017 code    cand=  36 sel= 35 truth= 33 cost= 25.454 probeCPU= 0.19 hot live:incl-rest 
+m100_0018 code    cand= 308 sel=  3 truth=  2 cost=  8.860 probeCPU= 8.84 cold stage2-live import-probe:0mods/0t/0.02s 
+m100_0019 code    cand=  10 sel=  4 truth=  1 cost=  3.333 probeCPU= 0.19 hot live:incl-rest import-probe:0mods/0t/0.02s 
+m100_0020 code    cand= 312 sel=  5 truth=  2 cost= 25.454 probeCPU=14.48 hot stage2-live 
+m100_0021 code    cand=   1 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.02 hot all-pass(s1) 
+m100_0022 code    cand=  15 sel= 15 truth= 15 cost=  4.331 probeCPU= 0.29 hot live:incl-rest 
+m100_0023 code    cand=  41 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.86 hot all-pass 
+m100_0024 code    cand=   9 sel=  2 truth=  1 cost=  3.410 probeCPU= 0.25 hot live:incl-rest import-probe:0mods/0t/0.02s 
+m100_0025 code    cand=   1 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.08 hot all-pass(s1) 
+m100_0026 code    cand=  96 sel=  0 truth=  0 cost=  0.000 probeCPU= 3.85 hot all-pass 
+m100_0027 code    cand=   6 sel=  0 truth=  0 cost=  0.000 probeCPU= 1.64 hot all-pass 
+P5 B=2.0 ALPHA=1.0 SIMULATED=514.042s misses=0 static_wall=4.03s warm_cpu=1.97s self_cpu=10.97s children_cpu=252.24s modes={'import_partial': 21, 'hot': 40, 'cold': 34, 'import': 14} closure=[2, 37, 2, -234, -234, -234, -234, 31, 2, 25, 20, -234, 2, -234, 2, -234, -234, 34, -234, -234, -234, -234, 4, -234, 34, 36, 36, -234, 2, 1, 2, 2, 6, 2, 2] wall=257.3s
+nanobind: leaked 27 instances!
+nanobind: leaked 15 types!
+ - leaked type "_duckdb._sqltypes.DuckDBPyType"
+ - leaked type "token_type"
+ - leaked type "RenderMode"
+ - leaked type "CSVLineTerminator"
+ - leaked type "_duckdb.SourceHandle"
+ - leaked type "_duckdb.DuckDBPyConnection"
+ - leaked type "FunctionNullHandling"
+ - leaked type "StatementType"
+ - leaked type "ExpectedResultType"
+ - leaked type "PythonUDFType"
+ - ... skipped remainder
+nanobind: leaked 112 functions!
+ - leaked function "df"
+ - leaked function "fetchnumpy"
+ - leaked function "append"
+ - leaked function "drain"
+ - leaked function "_statement_count"
+ - leaked function "array_type"
+ - leaked function "type"
+ - leaked function "__getattr__"
+ - leaked function "append_row"
+ - leaked function "disable_profiling"
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html

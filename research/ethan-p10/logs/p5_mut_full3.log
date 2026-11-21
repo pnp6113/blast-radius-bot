@@ -1,0 +1,63 @@
+i9_0000 code    cand=  10 sel=  1 truth=  1 cost=  2.156 probeCPU= 1.04 hot stage2-live import-probe:0mods/0t 
+i9_0001 code    cand= 107 sel=  2 truth=  1 cost=  8.731 probeCPU= 6.13 hot stage2-live import-probe:0mods/0t 
+i9_0002 code    cand=   2 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.31 cold all-pass(s1) import-probe:0mods/0t 
+i9_0003 code    cand= 448 sel=279 truth=  2 cost= 12.686 probeCPU= 0.55 cold live:incl-rest import-probe:0mods/0t 
+i9_0004 code    cand= 292 sel=  3 truth=  1 cost= 10.686 probeCPU= 9.87 cold stage2-live import-probe:0mods/0t 
+i9_0005 code    cand= 448 sel=  2 truth=  1 cost=  8.692 probeCPU=10.40 cold stage2-live import-probe:0mods/0t 
+i9_0006 code    cand=1584 sel=  0 truth=  0 cost=  0.000 probeCPU=24.27 cold all-pass import-probe:0mods/0t 
+i9_0007 code    cand=   9 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.79 cold all-pass import-probe:0mods/0t 
+i9_0008 code    cand=   3 sel=  0 truth=  0 cost=  0.000 probeCPU= 1.73 cold all-pass import-probe:0mods/0t 
+i9_0009 code    cand=   2 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.35 cold all-pass(s1) import-probe:0mods/0t 
+i9_0010 code    cand= 207 sel=  2 truth=  1 cost=  5.570 probeCPU= 9.62 cold stage2-live import-probe:0mods/0t 
+i9_0011 code    cand=  70 sel= 40 truth= 32 cost=  7.094 probeCPU= 0.66 cold live:incl-rest import-probe:0mods/0t 
+i9_0012 code    cand= 437 sel=  6 truth=  2 cost= 25.454 probeCPU=15.95 cold stage2-live import-probe:0mods/0t 
+i9_0013 code    cand= 304 sel=304 truth=  1 cost=  9.957 probeCPU= 0.21 hot include-all(EV) import-probe:0mods/0t 
+i9_0014 code    cand= 448 sel=  2 truth=  1 cost=  8.692 probeCPU=10.38 cold stage2-live import-probe:0mods/0t 
+i9_0015 code    cand= 147 sel=147 truth=  2 cost=  8.203 probeCPU= 0.22 cold include-all(EV) import-probe:0mods/0t 
+i9_0016 code    cand= 320 sel=  2 truth=  1 cost=  8.765 probeCPU=11.25 hot stage2-live import-probe:0mods/0t 
+i9_0017 code    cand= 144 sel= 88 truth= 15 cost= 25.454 probeCPU= 1.99 cold live:incl-rest import-probe:0mods/0t 
+i9_0018 code    cand=  44 sel=  0 truth=  0 cost=  0.000 probeCPU= 1.23 hot all-pass import-probe:0mods/0t 
+i9_0019 code    cand=1494 sel=1434 truth=1115 cost= 36.817 probeCPU= 2.15 cold live:incl-rest import-probe:36mods/1113t 
+i9_0020 code    cand=1522 sel=  0 truth=  0 cost=  0.000 probeCPU=25.67 cold all-pass import-probe:0mods/0t 
+i9_0021 code    cand= 436 sel=  9 truth=  5 cost= 25.454 probeCPU=16.10 cold stage2-live import-probe:0mods/0t 
+i9_0022 code    cand= 117 sel=  2 truth=  1 cost=  8.765 probeCPU= 4.62 hot stage2-live import-probe:0mods/0t 
+i9_0023 code    cand= 359 sel=  2 truth=  1 cost= 10.649 probeCPU=10.14 cold stage2-live import-probe:0mods/0t 
+i9_0024 code    cand= 171 sel=  2 truth=  1 cost=  8.705 probeCPU= 4.67 hot stage2-live import-probe:0mods/0t 
+i9_0025 code    cand=  15 sel= 10 truth= 10 cost=  2.845 probeCPU= 0.40 cold live:incl-rest import-probe:0mods/0t 
+i9_0026 code    cand=1584 sel=  0 truth=  0 cost=  0.000 probeCPU=25.46 cold all-pass import-probe:0mods/0t 
+i9_0027 code    cand= 170 sel=170 truth=  1 cost=  7.895 probeCPU= 0.27 hot include-all(EV) import-probe:0mods/0t 
+i9_0028 code    cand=  16 sel=  0 truth=  0 cost=  0.000 probeCPU= 2.60 cold all-pass import-probe:0mods/0t 
+i9_0029 code    cand=  37 sel=  4 truth=  1 cost=  3.114 probeCPU= 0.45 hot live:incl-rest import-probe:0mods/0t 
+m101_0000 code    cand=   1 sel=  1 truth=  1 cost=  3.963 probeCPU= 0.00 hot include-all(EV) 
+m101_0001 code    cand=  37 sel= 24 truth= 14 cost= 25.454 probeCPU= 1.65 hot live:incl-rest 
+m101_0002 code    cand=  23 sel=  0 truth=  0 cost=  0.000 probeCPU= 1.51 cold all-pass import-probe:0mods/0t 
+m101_0003 code    cand=   1 sel=  1 truth=  1 cost=  2.016 probeCPU= 0.04 hot live:incl-rest 
+m101_0004 code    cand=  38 sel= 38 truth= 37 cost= 25.454 probeCPU= 1.35 hot live:incl-rest 
+m101_0005 code    cand=   1 sel=  1 truth=  1 cost=  2.003 probeCPU= 0.02 hot live:incl-rest 
+m101_0006 code    cand=   7 sel=  2 truth=  2 cost=  2.024 probeCPU= 0.05 hot live:incl-rest 
+m101_0007 code    cand=  66 sel=  3 truth=  1 cost= 25.454 probeCPU= 8.91 hot stage2-live 
+m101_0008 code    cand=  46 sel= 32 truth= 30 cost=  2.600 probeCPU= 0.17 hot live:incl-rest 
+m101_0009 code    cand=  30 sel=  1 truth=  1 cost=  2.068 probeCPU= 4.12 hot stage2-live import-probe:0mods/0t 
+m101_0010 code    cand=   1 sel=  1 truth=  1 cost=  2.001 probeCPU= 0.01 hot live:incl-rest 
+m101_0011 code    cand=   2 sel=  2 truth=  2 cost=  2.016 probeCPU= 0.04 hot live:incl-rest 
+m101_0012 code    cand=   9 sel=  9 truth=  6 cost= 25.454 probeCPU= 1.39 hot live:incl-rest 
+m101_0013 code    cand=   4 sel=  3 truth=  1 cost=  4.427 probeCPU= 0.07 hot live:incl-rest 
+m101_0014 code    cand=   1 sel=  1 truth=  1 cost=  2.092 probeCPU= 0.24 hot live:incl-rest 
+m101_0015 code    cand= 100 sel=100 truth= 99 cost= 25.454 probeCPU= 1.33 hot live:incl-rest 
+m101_0016 code    cand=   1 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.24 hot all-pass(s1) 
+m101_0017 code    cand=  13 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.06 hot all-pass(s1) 
+m101_0018 code    cand=   8 sel=  7 truth=  5 cost= 25.454 probeCPU= 1.32 hot live:incl-rest 
+m101_0019 code    cand=   2 sel=  1 truth=  1 cost=  2.033 probeCPU= 0.11 hot live:incl-rest 
+m101_0020 code    cand=   3 sel=  3 truth=  3 cost=  2.382 probeCPU= 0.16 cold live:incl-rest 
+/workspace/blast/sqlglot/sqlglot/typing/spark2.py:35: SyntaxWarning: "is not" with 'int' literal. Did you mean "!="?
+  e.type is not None and not e.is_type(exp.DType.UNKNOWN, exp.DType.ARRAY, exp.DType.BINARY)
+m101_0021 code    cand=   1 sel=  1 truth=  0 cost=  3.963 probeCPU=-0.00 hot include-all(EV) 
+m101_0022 code    cand=  30 sel= 28 truth= 26 cost= 25.454 probeCPU= 1.36 hot live:incl-rest 
+m101_0023 code    cand=  54 sel= 54 truth= 49 cost=  6.715 probeCPU=-0.00 hot include-all(EV) 
+m101_0024 code    cand=  11 sel=  1 truth=  1 cost=  2.012 probeCPU= 0.47 hot live:incl-rest import-probe:0mods/0t 
+m101_0025 code    cand=   2 sel=  2 truth=  2 cost=  2.013 probeCPU= 0.07 hot live:incl-rest 
+m101_0026 code    cand=   1 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.13 cold all-pass(s1) 
+m101_0027 code    cand=  14 sel=  1 truth=  1 cost=  2.001 probeCPU= 0.06 hot live:incl-rest 
+m101_0028 code    cand=  50 sel= 46 truth= 45 cost= 24.569 probeCPU= 1.34 hot live:incl-rest 
+m101_0029 code    cand=   4 sel=  2 truth=  2 cost=  2.031 probeCPU= 0.18 hot live:incl-rest 
+P5 B=2.0 ALPHA=1.0 SIMULATED=497.491s misses=0 static_wall=3.94s warm_cpu=0.70s self_cpu=8.63s children_cpu=225.89s modes={'import': 33, 'hot': 39, 'cold': 37} wall=232.5s

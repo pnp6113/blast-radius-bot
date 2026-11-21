@@ -1,0 +1,77 @@
+Unable to set __version__, run `pip install -e .` or `python setup.py develop` first.
+i7_0000 code    cand=  36 sel= 22 truth=  1 cost=  3.533 probeCPU= 0.10 hot live:incl import-probe:0mods/0t/0.02s 
+i7_0001 code    cand= 434 sel= 13 truth= 10 cost= 25.454 probeCPU=14.66 cold stage2-live:incl import-probe:0mods/0t/0.02s 
+i7_0002 code    cand=1351 sel=  6 truth=  1 cost= 25.454 probeCPU=19.98 hot stage2-live:incl import-probe:0mods/0t/0.30s 
+i7_0003 code    cand= 240 sel=240 truth=  8 cost=  9.141 probeCPU= 0.06 cold include-all(EV) import-probe:0mods/0t/0.06s 
+i7_0004 code    cand= 346 sel=315 truth=  9 cost= 27.362 probeCPU= 0.47 cold live:incl import-probe:0mods/0t/0.33s 
+i7_0005 code    cand=   2 sel=  1 truth=  1 cost=  2.009 probeCPU= 0.33 cold live import-probe:0mods/0t/0.21s 
+i7_0006 code    cand=   2 sel=  2 truth=  1 cost=  2.719 probeCPU= 0.61 cold live:incl import-probe:0mods/0t/0.33s 
+i7_0007 code    cand=  37 sel= 17 truth=  1 cost=  3.317 probeCPU= 0.07 hot live:incl import-probe:0mods/0t/0.02s 
+i7_0008 code    cand= 147 sel=147 truth=  0 cost=  8.203 probeCPU= 0.01 cold include-all(EV) import-probe:0mods/0t/0.01s 
+i7_0009 code    cand= 436 sel=  5 truth=  1 cost= 25.454 probeCPU=13.45 hot stage2-live:incl 
+i7_0010 code    cand=1351 sel=  6 truth=  1 cost= 25.454 probeCPU=20.08 hot stage2-live:incl import-probe:0mods/0t/0.27s 
+i7_0011 code    cand=1431 sel=  0 truth=  0 cost=  0.000 probeCPU=22.85 cold all-pass import-probe:0mods/0t/0.23s 
+i7_0012 code    cand=  37 sel= 17 truth=  1 cost=  3.317 probeCPU= 0.09 hot live:incl import-probe:0mods/0t/0.02s 
+i7_0013 code    cand=  31 sel= 30 truth= 25 cost=  3.903 probeCPU= 0.44 cold live:incl import-probe:0mods/0t/0.24s 
+i7_0014 code    cand=  40 sel= 29 truth=  7 cost=  7.436 probeCPU= 0.14 hot live:incl import-probe:0mods/0t/0.02s 
+i7_0015 code    cand=  37 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.86 hot all-pass import-probe:0mods/0t/0.02s 
+i7_0016 code    cand= 171 sel=  1 truth=  1 cost=  2.287 probeCPU= 4.89 hot stage2-live:probe import-probe:0mods/0t/0.21s 
+i7_0017 code    cand= 434 sel=403 truth=  1 cost= 26.771 probeCPU= 0.20 cold live:incl import-probe:0mods/0t/0.03s 
+i7_0018 code    cand= 131 sel=  0 truth=  0 cost=  0.000 probeCPU=12.43 cold all-pass import-probe:0mods/0t/0.22s 
+i7_0019 code    cand= 107 sel=  1 truth=  1 cost=  2.045 probeCPU= 5.82 hot stage2-live:probe import-probe:0mods/0t/0.02s 
+i7_0020 code    cand=   2 sel=  2 truth=  2 cost=  3.967 probeCPU= 0.31 cold live:incl import-probe:0mods/0t/0.21s 
+i7_0021 code    cand= 270 sel=  5 truth=  4 cost=  6.387 probeCPU=14.32 cold stage2-live:probe import-probe:0mods/0t/0.26s 
+i7_0022 code    cand=  12 sel=  3 truth=  1 cost=  2.179 probeCPU= 0.14 hot live:incl import-probe:0mods/0t/0.04s 
+i7_0023 code    cand=  46 sel=  1 truth=  1 cost=  2.006 probeCPU= 0.79 hot live:probe import-probe:0mods/0t/0.02s 
+m99_0000 code    cand=   1 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.03 hot all-pass(s1) 
+m99_0001 code    cand=   6 sel=  5 truth=  4 cost=  4.298 probeCPU= 0.10 hot live:incl 
+m99_0002 code    cand=   4 sel=  1 truth=  1 cost=  2.002 probeCPU= 0.09 hot live 
+m99_0003 code    cand=   1 sel=  1 truth=  1 cost=  2.008 probeCPU= 0.02 hot live 
+m99_0004 code    cand= 150 sel=119 truth= 13 cost= 32.817 probeCPU= 0.33 cold live:incl import-probe:0mods/0t/0.20s 
+m99_0005 code    cand=   1 sel=  1 truth=  1 cost=  3.406 probeCPU= 0.00 hot include-all(EV) 
+m99_0006 code    cand=  17 sel=  9 truth=  1 cost=  3.590 probeCPU= 0.12 hot live:incl import-probe:0mods/0t/0.01s 
+m99_0007 code    cand=   3 sel=  3 truth=  3 cost=  2.047 probeCPU= 0.10 hot live 
+m99_0008 code    cand=   1 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.03 hot all-pass(s1) 
+m99_0009 code    cand=  53 sel= 40 truth=  8 cost= 24.745 probeCPU= 0.06 hot live:incl 
+m99_0010 code    cand=  39 sel= 36 truth= 34 cost=  6.608 probeCPU= 0.39 cold live:incl import-probe:0mods/0t/0.20s 
+m99_0011 code    cand=  17 sel= 14 truth=  9 cost= 25.454 probeCPU= 0.14 hot live:incl 
+m99_0012 code    cand=  33 sel= 20 truth=  6 cost=  6.516 probeCPU= 0.10 hot live:incl import-probe:0mods/0t/0.02s 
+m99_0013 code    cand=   1 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.08 hot all-pass(s1) 
+m99_0014 code    cand=  28 sel= 18 truth=  6 cost=  3.632 probeCPU= 0.11 hot live:incl 
+m99_0015 code    cand=   1 sel=  1 truth=  1 cost=  2.045 probeCPU= 0.04 hot live 
+m99_0016 code    cand=   1 sel=  1 truth=  1 cost=  2.007 probeCPU= 0.07 hot live 
+m99_0017 code    cand=   4 sel=  4 truth=  0 cost=  3.900 probeCPU= 0.00 hot include-all(EV) 
+m99_0018 code    cand=   1 sel=  1 truth=  1 cost=  2.089 probeCPU= 0.10 cold live 
+m99_0019 code    cand=  19 sel= 19 truth= 18 cost= 25.454 probeCPU= 0.11 hot live:incl 
+m99_0020 code    cand=  22 sel= 10 truth=  2 cost=  4.303 probeCPU= 0.06 hot live:incl 
+m99_0021 code    cand=   1 sel=  0 truth=  0 cost=  0.000 probeCPU= 0.02 hot all-pass(s1) 
+m99_0022 code    cand=1491 sel=1436 truth=745 cost= 36.683 probeCPU= 0.34 cold live:incl import-probe:0mods/0t/0.23s 
+m99_0023 code    cand=  53 sel= 14 truth= 13 cost= 25.454 probeCPU= 4.75 hot stage2-live 
+P5 B=2.0 ALPHA=1.0 SIMULATED=437.456s misses=0 static_wall=3.63s warm_cpu=1.01s self_cpu=5.79s children_cpu=140.31s modes={'import_partial': 14, 'hot': 40, 'cold': 19, 'import': 14} closure=[2, 35, -234, 38, -234, -234, -234, 2, 1, -234, -234, 2, -234, 4, 2, -234, 35, -234, 2, -234, -234, 25, 3, -234, 1, -234, 2, -234] wall=157.7s
+nanobind: leaked 27 instances!
+nanobind: leaked 15 types!
+ - leaked type "_duckdb._sqltypes.DuckDBPyType"
+ - leaked type "token_type"
+ - leaked type "RenderMode"
+ - leaked type "CSVLineTerminator"
+ - leaked type "_duckdb.SourceHandle"
+ - leaked type "_duckdb.DuckDBPyConnection"
+ - leaked type "FunctionNullHandling"
+ - leaked type "StatementType"
+ - leaked type "ExpectedResultType"
+ - leaked type "PythonUDFType"
+ - ... skipped remainder
+nanobind: leaked 112 functions!
+ - leaked function "_catalog_version"
+ - leaked function "fetchnumpy"
+ - leaked function "__hash__"
+ - leaked function "_name_scope"
+ - leaked function "unregister"
+ - leaked function "__new__"
+ - leaked function "_register_collection"
+ - leaked function "_create_view"
+ - leaked function "remove_function"
+ - leaked function "type"
+ - ... skipped remainder
+nanobind: this is likely caused by a reference counting issue in the binding code.
+See https://nanobind.readthedocs.io/en/latest/refleaks.html

@@ -1,0 +1,1232 @@
+{
+  "warning": "Sample-set breakdown of the current selector. The final batch is unseen. A test that did not fail here can still fail there.",
+  "official_simulated_ms": 482337,
+  "misses": [],
+  "makespan_ms": 346337,
+  "overhead_ms": 136000,
+  "penalty_ms": 0,
+  "collapsed_commits": 8,
+  "collapsed_cost_ms": 294536,
+  "narrow_commits": 22,
+  "narrow_cost_ms": 187801,
+  "longest_critical_test": [
+    {
+      "id": "tests/test_parser.py::TestParser::test_max_nodes",
+      "test_ms": 28817,
+      "commits": 8,
+      "makespan_ms": 230536,
+      "cost_ms": 294536
+    },
+    {
+      "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+      "test_ms": 6686,
+      "commits": 13,
+      "makespan_ms": 92447,
+      "cost_ms": 144447
+    },
+    {
+      "id": "tests/test_executor.py::TestExecutor::test_execute_tpcds",
+      "test_ms": 21454,
+      "commits": 1,
+      "makespan_ms": 21454,
+      "cost_ms": 25454
+    },
+    {
+      "id": "tests/test_optimizer.py::TestOptimizer::test_merge_subqueries",
+      "test_ms": 1016,
+      "commits": 1,
+      "makespan_ms": 1016,
+      "cost_ms": 3016
+    },
+    {
+      "id": "tests/test_optimizer.py::TestOptimizer::test_simplify",
+      "test_ms": 596,
+      "commits": 1,
+      "makespan_ms": 596,
+      "cost_ms": 2596
+    },
+    {
+      "id": "tests/test_optimizer.py::TestOptimizer::test_pushdown_projection",
+      "test_ms": 92,
+      "commits": 1,
+      "makespan_ms": 92,
+      "cost_ms": 2092
+    },
+    {
+      "id": "tests/test_optimizer.py::TestOptimizer::test_pushdown_predicates",
+      "test_ms": 83,
+      "commits": 1,
+      "makespan_ms": 83,
+      "cost_ms": 2083
+    },
+    {
+      "id": "tests/test_optimizer.py::TestOptimizer::test_annotate_types",
+      "test_ms": 61,
+      "commits": 1,
+      "makespan_ms": 61,
+      "cost_ms": 2061
+    },
+    {
+      "id": "tests/test_optimizer.py::TestOptimizer::test_qualify_columns__invalid",
+      "test_ms": 37,
+      "commits": 1,
+      "makespan_ms": 37,
+      "cost_ms": 2037
+    },
+    {
+      "id": "tests/test_optimizer.py::TestOptimizer::test_isolate_table_selects",
+      "test_ms": 8,
+      "commits": 1,
+      "makespan_ms": 8,
+      "cost_ms": 2008
+    },
+    {
+      "id": "tests/test_optimizer.py::TestOptimizer::test_pushdown_cte_alias_columns",
+      "test_ms": 7,
+      "commits": 1,
+      "makespan_ms": 7,
+      "cost_ms": 2007
+    }
+  ],
+  "commits": [
+    {
+      "commit": "2haz",
+      "kind": "code",
+      "changed": [
+        "sqlglot/dialects/dialect.py"
+      ],
+      "selected": 1617,
+      "failing": 0,
+      "workers": 4,
+      "worker_loads_ms": [
+        28817,
+        24705,
+        24705,
+        24705
+      ],
+      "makespan_ms": 28817,
+      "overhead_ms": 8000,
+      "slack_ms": 12336,
+      "penalty_ms": 0,
+      "cost_ms": 36817,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1490,
+          "id": "tests/test_parser.py::TestParser::test_max_nodes",
+          "file": "tests/test_parser.py",
+          "ms": 28817,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "2jrq",
+      "kind": "code",
+      "changed": [
+        "sqlglot/optimizer/eliminate_joins.py"
+      ],
+      "selected": 1617,
+      "failing": 8,
+      "workers": 4,
+      "worker_loads_ms": [
+        28817,
+        24705,
+        24705,
+        24705
+      ],
+      "makespan_ms": 28817,
+      "overhead_ms": 8000,
+      "slack_ms": 12336,
+      "penalty_ms": 0,
+      "cost_ms": 36817,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1490,
+          "id": "tests/test_parser.py::TestParser::test_max_nodes",
+          "file": "tests/test_parser.py",
+          "ms": 28817,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "3utz",
+      "kind": "code",
+      "changed": [
+        "sqlglot/serde.py"
+      ],
+      "selected": 1617,
+      "failing": 37,
+      "workers": 4,
+      "worker_loads_ms": [
+        28817,
+        24705,
+        24705,
+        24705
+      ],
+      "makespan_ms": 28817,
+      "overhead_ms": 8000,
+      "slack_ms": 12336,
+      "penalty_ms": 0,
+      "cost_ms": 36817,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1490,
+          "id": "tests/test_parser.py::TestParser::test_max_nodes",
+          "file": "tests/test_parser.py",
+          "ms": 28817,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "535z",
+      "kind": "code",
+      "changed": [
+        "sqlglot/dialects/tsql.py"
+      ],
+      "selected": 1617,
+      "failing": 1,
+      "workers": 4,
+      "worker_loads_ms": [
+        28817,
+        24705,
+        24705,
+        24705
+      ],
+      "makespan_ms": 28817,
+      "overhead_ms": 8000,
+      "slack_ms": 12336,
+      "penalty_ms": 0,
+      "cost_ms": 36817,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1490,
+          "id": "tests/test_parser.py::TestParser::test_max_nodes",
+          "file": "tests/test_parser.py",
+          "ms": 28817,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "5y72",
+      "kind": "code",
+      "changed": [
+        "sqlglot/optimizer/eliminate_subqueries.py"
+      ],
+      "selected": 1617,
+      "failing": 0,
+      "workers": 4,
+      "worker_loads_ms": [
+        28817,
+        24705,
+        24705,
+        24705
+      ],
+      "makespan_ms": 28817,
+      "overhead_ms": 8000,
+      "slack_ms": 12336,
+      "penalty_ms": 0,
+      "cost_ms": 36817,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1490,
+          "id": "tests/test_parser.py::TestParser::test_max_nodes",
+          "file": "tests/test_parser.py",
+          "ms": 28817,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "bap8",
+      "kind": "comment",
+      "changed": [
+        "sqlglot/transforms.py"
+      ],
+      "selected": 1617,
+      "failing": 0,
+      "workers": 4,
+      "worker_loads_ms": [
+        28817,
+        24705,
+        24705,
+        24705
+      ],
+      "makespan_ms": 28817,
+      "overhead_ms": 8000,
+      "slack_ms": 12336,
+      "penalty_ms": 0,
+      "cost_ms": 36817,
+      "fallback": false,
+      "comment_only": true,
+      "critical_tests": [
+        {
+          "number": 1490,
+          "id": "tests/test_parser.py::TestParser::test_max_nodes",
+          "file": "tests/test_parser.py",
+          "ms": 28817,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "ktz3",
+      "kind": "code",
+      "changed": [
+        "sqlglot/expressions/ddl.py"
+      ],
+      "selected": 1617,
+      "failing": 0,
+      "workers": 4,
+      "worker_loads_ms": [
+        28817,
+        24705,
+        24705,
+        24705
+      ],
+      "makespan_ms": 28817,
+      "overhead_ms": 8000,
+      "slack_ms": 12336,
+      "penalty_ms": 0,
+      "cost_ms": 36817,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1490,
+          "id": "tests/test_parser.py::TestParser::test_max_nodes",
+          "file": "tests/test_parser.py",
+          "ms": 28817,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "rszg",
+      "kind": "multi",
+      "changed": [
+        "sqlglot/optimizer/scope.py",
+        "sqlglot/typing/snowflake.py",
+        "tests/fixtures/optimizer/qualify_columns_ddl.sql"
+      ],
+      "selected": 1619,
+      "failing": 3,
+      "workers": 4,
+      "worker_loads_ms": [
+        28817,
+        24737,
+        24736,
+        24736
+      ],
+      "makespan_ms": 28817,
+      "overhead_ms": 8000,
+      "slack_ms": 12242,
+      "penalty_ms": 0,
+      "cost_ms": 36817,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1490,
+          "id": "tests/test_parser.py::TestParser::test_max_nodes",
+          "file": "tests/test_parser.py",
+          "ms": 28817,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "66ks",
+      "kind": "code",
+      "changed": [
+        "sqlglot/executor/context.py"
+      ],
+      "selected": 60,
+      "failing": 0,
+      "workers": 2,
+      "worker_loads_ms": [
+        21454,
+        10111
+      ],
+      "makespan_ms": 21454,
+      "overhead_ms": 4000,
+      "slack_ms": 11343,
+      "penalty_ms": 0,
+      "cost_ms": 25454,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1106,
+          "id": "tests/test_executor.py::TestExecutor::test_execute_tpcds",
+          "file": "tests/test_executor.py",
+          "ms": 21454,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "4d63",
+      "kind": "code",
+      "changed": [
+        "sqlglot/dialects/snowflake.py"
+      ],
+      "selected": 360,
+      "failing": 0,
+      "workers": 3,
+      "worker_loads_ms": [
+        6686,
+        5544,
+        5543
+      ],
+      "makespan_ms": 6686,
+      "overhead_ms": 6000,
+      "slack_ms": 2285,
+      "penalty_ms": 0,
+      "cost_ms": 12686,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1224,
+          "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+          "file": "tests/test_generator.py",
+          "ms": 6686,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "986c",
+      "kind": "multi",
+      "changed": [
+        "sqlglot/dialects/singlestore.py",
+        "sqlglot/typing/snowflake.py",
+        "tests/fixtures/optimizer/unnest_subqueries.sql"
+      ],
+      "selected": 391,
+      "failing": 1,
+      "workers": 3,
+      "worker_loads_ms": [
+        6686,
+        5805,
+        5804
+      ],
+      "makespan_ms": 6686,
+      "overhead_ms": 6000,
+      "slack_ms": 1763,
+      "penalty_ms": 0,
+      "cost_ms": 12686,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1224,
+          "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+          "file": "tests/test_generator.py",
+          "ms": 6686,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "ary6",
+      "kind": "code",
+      "changed": [
+        "sqlglot/parsers/bigquery.py"
+      ],
+      "selected": 294,
+      "failing": 10,
+      "workers": 3,
+      "worker_loads_ms": [
+        6686,
+        6613,
+        6613
+      ],
+      "makespan_ms": 6686,
+      "overhead_ms": 6000,
+      "slack_ms": 146,
+      "penalty_ms": 0,
+      "cost_ms": 12686,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1224,
+          "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+          "file": "tests/test_generator.py",
+          "ms": 6686,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "j6uz",
+      "kind": "code",
+      "changed": [
+        "sqlglot/parsers/bigquery.py"
+      ],
+      "selected": 294,
+      "failing": 2,
+      "workers": 3,
+      "worker_loads_ms": [
+        6686,
+        6613,
+        6613
+      ],
+      "makespan_ms": 6686,
+      "overhead_ms": 6000,
+      "slack_ms": 146,
+      "penalty_ms": 0,
+      "cost_ms": 12686,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1224,
+          "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+          "file": "tests/test_generator.py",
+          "ms": 6686,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "2qn5",
+      "kind": "code",
+      "changed": [
+        "sqlglot/generators/clickhouse.py"
+      ],
+      "selected": 149,
+      "failing": 0,
+      "workers": 2,
+      "worker_loads_ms": [
+        7544,
+        7543
+      ],
+      "makespan_ms": 7544,
+      "overhead_ms": 4000,
+      "slack_ms": 1,
+      "penalty_ms": 0,
+      "cost_ms": 11544,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1224,
+          "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+          "file": "tests/test_generator.py",
+          "ms": 6686,
+          "failed_here": false
+        },
+        {
+          "number": 228,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_operators",
+          "file": "tests/dialects/test_dialect.py",
+          "ms": 76,
+          "failed_here": false
+        },
+        {
+          "number": 424,
+          "id": "tests/dialects/test_hive.py::TestHive::test_hive",
+          "file": "tests/dialects/test_hive.py",
+          "ms": 74,
+          "failed_here": false
+        },
+        {
+          "number": 1350,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_nonnull_annotation",
+          "file": "tests/test_optimizer.py",
+          "ms": 67,
+          "failed_here": false
+        },
+        {
+          "number": 85,
+          "id": "tests/dialects/test_bigquery.py::TestBigQuery::test_week",
+          "file": "tests/dialects/test_bigquery.py",
+          "ms": 51,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "8y7j",
+      "kind": "code",
+      "changed": [
+        "sqlglot/generators/clickhouse.py"
+      ],
+      "selected": 149,
+      "failing": 0,
+      "workers": 2,
+      "worker_loads_ms": [
+        7544,
+        7543
+      ],
+      "makespan_ms": 7544,
+      "overhead_ms": 4000,
+      "slack_ms": 1,
+      "penalty_ms": 0,
+      "cost_ms": 11544,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1224,
+          "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+          "file": "tests/test_generator.py",
+          "ms": 6686,
+          "failed_here": false
+        },
+        {
+          "number": 228,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_operators",
+          "file": "tests/dialects/test_dialect.py",
+          "ms": 76,
+          "failed_here": false
+        },
+        {
+          "number": 424,
+          "id": "tests/dialects/test_hive.py::TestHive::test_hive",
+          "file": "tests/dialects/test_hive.py",
+          "ms": 74,
+          "failed_here": false
+        },
+        {
+          "number": 1350,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_nonnull_annotation",
+          "file": "tests/test_optimizer.py",
+          "ms": 67,
+          "failed_here": false
+        },
+        {
+          "number": 85,
+          "id": "tests/dialects/test_bigquery.py::TestBigQuery::test_week",
+          "file": "tests/dialects/test_bigquery.py",
+          "ms": 51,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "bj7g",
+      "kind": "code",
+      "changed": [
+        "sqlglot/generators/clickhouse.py"
+      ],
+      "selected": 149,
+      "failing": 1,
+      "workers": 2,
+      "worker_loads_ms": [
+        7544,
+        7543
+      ],
+      "makespan_ms": 7544,
+      "overhead_ms": 4000,
+      "slack_ms": 1,
+      "penalty_ms": 0,
+      "cost_ms": 11544,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1224,
+          "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+          "file": "tests/test_generator.py",
+          "ms": 6686,
+          "failed_here": false
+        },
+        {
+          "number": 228,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_operators",
+          "file": "tests/dialects/test_dialect.py",
+          "ms": 76,
+          "failed_here": false
+        },
+        {
+          "number": 424,
+          "id": "tests/dialects/test_hive.py::TestHive::test_hive",
+          "file": "tests/dialects/test_hive.py",
+          "ms": 74,
+          "failed_here": false
+        },
+        {
+          "number": 1350,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_nonnull_annotation",
+          "file": "tests/test_optimizer.py",
+          "ms": 67,
+          "failed_here": false
+        },
+        {
+          "number": 85,
+          "id": "tests/dialects/test_bigquery.py::TestBigQuery::test_week",
+          "file": "tests/dialects/test_bigquery.py",
+          "ms": 51,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "9u5k",
+      "kind": "comment",
+      "changed": [
+        "sqlglot/generators/sqlite.py"
+      ],
+      "selected": 116,
+      "failing": 0,
+      "workers": 2,
+      "worker_loads_ms": [
+        6686,
+        5764
+      ],
+      "makespan_ms": 6686,
+      "overhead_ms": 4000,
+      "slack_ms": 922,
+      "penalty_ms": 0,
+      "cost_ms": 10686,
+      "fallback": false,
+      "comment_only": true,
+      "critical_tests": [
+        {
+          "number": 1224,
+          "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+          "file": "tests/test_generator.py",
+          "ms": 6686,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "f4xa",
+      "kind": "comment",
+      "changed": [
+        "sqlglot/generators/drill.py"
+      ],
+      "selected": 35,
+      "failing": 0,
+      "workers": 2,
+      "worker_loads_ms": [
+        6686,
+        2331
+      ],
+      "makespan_ms": 6686,
+      "overhead_ms": 4000,
+      "slack_ms": 4355,
+      "penalty_ms": 0,
+      "cost_ms": 10686,
+      "fallback": false,
+      "comment_only": true,
+      "critical_tests": [
+        {
+          "number": 1224,
+          "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+          "file": "tests/test_generator.py",
+          "ms": 6686,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "gbav",
+      "kind": "code",
+      "changed": [
+        "sqlglot/parsers/singlestore.py"
+      ],
+      "selected": 41,
+      "failing": 0,
+      "workers": 1,
+      "worker_loads_ms": [
+        8086
+      ],
+      "makespan_ms": 8086,
+      "overhead_ms": 2000,
+      "slack_ms": 0,
+      "penalty_ms": 0,
+      "cost_ms": 10086,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1224,
+          "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+          "file": "tests/test_generator.py",
+          "ms": 6686,
+          "failed_here": false
+        },
+        {
+          "number": 773,
+          "id": "tests/dialects/test_snowflake.py::TestSnowflake::test_snowflake",
+          "file": "tests/dialects/test_snowflake.py",
+          "ms": 662,
+          "failed_here": false
+        },
+        {
+          "number": 345,
+          "id": "tests/dialects/test_duckdb.py::TestDuckDB::test_duckdb",
+          "file": "tests/dialects/test_duckdb.py",
+          "ms": 287,
+          "failed_here": false
+        },
+        {
+          "number": 586,
+          "id": "tests/dialects/test_postgres.py::TestPostgres::test_postgres",
+          "file": "tests/dialects/test_postgres.py",
+          "ms": 156,
+          "failed_here": false
+        },
+        {
+          "number": 972,
+          "id": "tests/dialects/test_tsql.py::TestTSQL::test_ddl",
+          "file": "tests/dialects/test_tsql.py",
+          "ms": 36,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "bvw2",
+      "kind": "multi",
+      "changed": [
+        "sqlglot/dialects/materialize.py",
+        "tests/fixtures/optimizer/annotate_types.sql"
+      ],
+      "selected": 16,
+      "failing": 1,
+      "workers": 1,
+      "worker_loads_ms": [
+        7301
+      ],
+      "makespan_ms": 7301,
+      "overhead_ms": 2000,
+      "slack_ms": 0,
+      "penalty_ms": 0,
+      "cost_ms": 9301,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1224,
+          "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+          "file": "tests/test_generator.py",
+          "ms": 6686,
+          "failed_here": false
+        },
+        {
+          "number": 259,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_time",
+          "file": "tests/dialects/test_dialect.py",
+          "ms": 155,
+          "failed_here": false
+        },
+        {
+          "number": 1486,
+          "id": "tests/test_parser.py::TestParser::test_is_precedence",
+          "file": "tests/test_parser.py",
+          "ms": 144,
+          "failed_here": false
+        },
+        {
+          "number": 228,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_operators",
+          "file": "tests/dialects/test_dialect.py",
+          "ms": 76,
+          "failed_here": false
+        },
+        {
+          "number": 1302,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_annotate_types",
+          "file": "tests/test_optimizer.py",
+          "ms": 61,
+          "failed_here": true
+        }
+      ],
+      "failing_ms_on_critical_worker": 61
+    },
+    {
+      "commit": "6ze8",
+      "kind": "code",
+      "changed": [
+        "sqlglot/parsers/dremio.py"
+      ],
+      "selected": 36,
+      "failing": 1,
+      "workers": 1,
+      "worker_loads_ms": [
+        7156
+      ],
+      "makespan_ms": 7156,
+      "overhead_ms": 2000,
+      "slack_ms": 0,
+      "penalty_ms": 0,
+      "cost_ms": 9156,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1224,
+          "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+          "file": "tests/test_generator.py",
+          "ms": 6686,
+          "failed_here": false
+        },
+        {
+          "number": 259,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_time",
+          "file": "tests/dialects/test_dialect.py",
+          "ms": 155,
+          "failed_here": false
+        },
+        {
+          "number": 1486,
+          "id": "tests/test_parser.py::TestParser::test_is_precedence",
+          "file": "tests/test_parser.py",
+          "ms": 144,
+          "failed_here": false
+        },
+        {
+          "number": 184,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_enum",
+          "file": "tests/dialects/test_dialect.py",
+          "ms": 26,
+          "failed_here": false
+        },
+        {
+          "number": 231,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_partition_by_excluding",
+          "file": "tests/dialects/test_dialect.py",
+          "ms": 26,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 1
+    },
+    {
+      "commit": "fryt",
+      "kind": "code",
+      "changed": [
+        "sqlglot/parsers/dremio.py"
+      ],
+      "selected": 36,
+      "failing": 0,
+      "workers": 1,
+      "worker_loads_ms": [
+        7156
+      ],
+      "makespan_ms": 7156,
+      "overhead_ms": 2000,
+      "slack_ms": 0,
+      "penalty_ms": 0,
+      "cost_ms": 9156,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1224,
+          "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+          "file": "tests/test_generator.py",
+          "ms": 6686,
+          "failed_here": false
+        },
+        {
+          "number": 259,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_time",
+          "file": "tests/dialects/test_dialect.py",
+          "ms": 155,
+          "failed_here": false
+        },
+        {
+          "number": 1486,
+          "id": "tests/test_parser.py::TestParser::test_is_precedence",
+          "file": "tests/test_parser.py",
+          "ms": 144,
+          "failed_here": false
+        },
+        {
+          "number": 184,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_enum",
+          "file": "tests/dialects/test_dialect.py",
+          "ms": 26,
+          "failed_here": false
+        },
+        {
+          "number": 231,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_partition_by_excluding",
+          "file": "tests/dialects/test_dialect.py",
+          "ms": 26,
+          "failed_here": false
+        }
+      ],
+      "failing_ms_on_critical_worker": 0
+    },
+    {
+      "commit": "mthh",
+      "kind": "fixture",
+      "changed": [
+        "tests/fixtures/optimizer/merge_subqueries.sql"
+      ],
+      "selected": 1,
+      "failing": 1,
+      "workers": 1,
+      "worker_loads_ms": [
+        1016
+      ],
+      "makespan_ms": 1016,
+      "overhead_ms": 2000,
+      "slack_ms": 0,
+      "penalty_ms": 0,
+      "cost_ms": 3016,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1343,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_merge_subqueries",
+          "file": "tests/test_optimizer.py",
+          "ms": 1016,
+          "failed_here": true
+        }
+      ],
+      "failing_ms_on_critical_worker": 1016
+    },
+    {
+      "commit": "egys",
+      "kind": "fixture",
+      "changed": [
+        "tests/fixtures/optimizer/simplify.sql"
+      ],
+      "selected": 1,
+      "failing": 1,
+      "workers": 1,
+      "worker_loads_ms": [
+        596
+      ],
+      "makespan_ms": 596,
+      "overhead_ms": 2000,
+      "slack_ms": 0,
+      "penalty_ms": 0,
+      "cost_ms": 2596,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1434,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_simplify",
+          "file": "tests/test_optimizer.py",
+          "ms": 596,
+          "failed_here": true
+        }
+      ],
+      "failing_ms_on_critical_worker": 596
+    },
+    {
+      "commit": "nwnx",
+      "kind": "fixture",
+      "changed": [
+        "tests/fixtures/optimizer/pushdown_projections.sql"
+      ],
+      "selected": 1,
+      "failing": 1,
+      "workers": 1,
+      "worker_loads_ms": [
+        92
+      ],
+      "makespan_ms": 92,
+      "overhead_ms": 2000,
+      "slack_ms": 0,
+      "penalty_ms": 0,
+      "cost_ms": 2092,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1378,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_pushdown_projection",
+          "file": "tests/test_optimizer.py",
+          "ms": 92,
+          "failed_here": true
+        }
+      ],
+      "failing_ms_on_critical_worker": 92
+    },
+    {
+      "commit": "2vdj",
+      "kind": "fixture",
+      "changed": [
+        "tests/fixtures/optimizer/pushdown_predicates.sql"
+      ],
+      "selected": 1,
+      "failing": 1,
+      "workers": 1,
+      "worker_loads_ms": [
+        83
+      ],
+      "makespan_ms": 83,
+      "overhead_ms": 2000,
+      "slack_ms": 0,
+      "penalty_ms": 0,
+      "cost_ms": 2083,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1377,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_pushdown_predicates",
+          "file": "tests/test_optimizer.py",
+          "ms": 83,
+          "failed_here": true
+        }
+      ],
+      "failing_ms_on_critical_worker": 83
+    },
+    {
+      "commit": "gbhk",
+      "kind": "fixture",
+      "changed": [
+        "tests/fixtures/optimizer/annotate_types.sql"
+      ],
+      "selected": 1,
+      "failing": 1,
+      "workers": 1,
+      "worker_loads_ms": [
+        61
+      ],
+      "makespan_ms": 61,
+      "overhead_ms": 2000,
+      "slack_ms": 0,
+      "penalty_ms": 0,
+      "cost_ms": 2061,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1302,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_annotate_types",
+          "file": "tests/test_optimizer.py",
+          "ms": 61,
+          "failed_here": true
+        }
+      ],
+      "failing_ms_on_critical_worker": 61
+    },
+    {
+      "commit": "6vvp",
+      "kind": "fixture",
+      "changed": [
+        "tests/fixtures/optimizer/qualify_columns__invalid.sql"
+      ],
+      "selected": 1,
+      "failing": 1,
+      "workers": 1,
+      "worker_loads_ms": [
+        37
+      ],
+      "makespan_ms": 37,
+      "overhead_ms": 2000,
+      "slack_ms": 0,
+      "penalty_ms": 0,
+      "cost_ms": 2037,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1383,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_qualify_columns__invalid",
+          "file": "tests/test_optimizer.py",
+          "ms": 37,
+          "failed_here": true
+        }
+      ],
+      "failing_ms_on_critical_worker": 37
+    },
+    {
+      "commit": "st8f",
+      "kind": "fixture",
+      "changed": [
+        "tests/fixtures/optimizer/isolate_table_selects.sql"
+      ],
+      "selected": 1,
+      "failing": 1,
+      "workers": 1,
+      "worker_loads_ms": [
+        8
+      ],
+      "makespan_ms": 8,
+      "overhead_ms": 2000,
+      "slack_ms": 0,
+      "penalty_ms": 0,
+      "cost_ms": 2008,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1335,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_isolate_table_selects",
+          "file": "tests/test_optimizer.py",
+          "ms": 8,
+          "failed_here": true
+        }
+      ],
+      "failing_ms_on_critical_worker": 8
+    },
+    {
+      "commit": "f4bn",
+      "kind": "fixture",
+      "changed": [
+        "tests/fixtures/optimizer/pushdown_cte_alias_columns.sql"
+      ],
+      "selected": 1,
+      "failing": 1,
+      "workers": 1,
+      "worker_loads_ms": [
+        7
+      ],
+      "makespan_ms": 7,
+      "overhead_ms": 2000,
+      "slack_ms": 0,
+      "penalty_ms": 0,
+      "cost_ms": 2007,
+      "fallback": false,
+      "comment_only": false,
+      "critical_tests": [
+        {
+          "number": 1375,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_pushdown_cte_alias_columns",
+          "file": "tests/test_optimizer.py",
+          "ms": 7,
+          "failed_here": true
+        }
+      ],
+      "failing_ms_on_critical_worker": 7
+    }
+  ]
+}

@@ -1,0 +1,272 @@
+{
+  "warning": "The oracle and the leave-one-commit trim both read sample answers. Shipping either one hardcodes the sample. A lower oracle number is headroom only if a coverage proof selects those tests without using the answers.",
+  "default_simulated_ms": 482337,
+  "by_kind": [
+    {
+      "kind": "code",
+      "commits": 16,
+      "cost_ms": 347444,
+      "misses": 0
+    },
+    {
+      "kind": "multi",
+      "commits": 3,
+      "cost_ms": 58804,
+      "misses": 0
+    },
+    {
+      "kind": "comment",
+      "commits": 3,
+      "cost_ms": 58189,
+      "misses": 0
+    },
+    {
+      "kind": "fixture",
+      "commits": 8,
+      "cost_ms": 17900,
+      "misses": 0
+    }
+  ],
+  "oracle_failing_tests_only_ms": 94351,
+  "oracle_headroom_ms": 387986,
+  "leave_one_commit_out": {
+    "rule": "On each commit, drop every selected test that failed on no other sample commit, then reschedule with the same scheduler.",
+    "simulated_ms": 2101780,
+    "missed_commits": 6,
+    "misses": [
+      {
+        "commit": "2jrq",
+        "missing": [
+          "tests/test_executor.py::TestExecutor::test_execute_subqueries",
+          "tests/test_optimizer.py::TestOptimizer::test_optimize_special_joins",
+          "tests/test_optimizer.py::TestOptimizer::test_pushdown_projections_prunes_non_self_referencing_ctes"
+        ]
+      },
+      {
+        "commit": "3utz",
+        "missing": [
+          "tests/dialects/test_databricks.py::TestDatabricks::test_optimize",
+          "tests/dialects/test_teradata.py::TestTeradata::test_execute",
+          "tests/dialects/test_teradata.py::TestTeradata::test_hex_character_string",
+          "tests/dialects/test_teradata.py::TestTeradata::test_named",
+          "tests/dialects/test_teradata.py::TestTeradata::test_named_attribute_order",
+          "tests/dialects/test_teradata.py::TestTeradata::test_title",
+          "tests/test_executor.py::TestExecutor::test_execute_tpch",
+          "tests/test_expressions.py::TestExprs::test_ref_type_builder",
+          "tests/test_optimizer.py::TestOptimizer::test_canonicalize",
+          "tests/test_optimizer.py::TestOptimizer::test_canonicalize_internal_names",
+          "tests/test_optimizer.py::TestOptimizer::test_eliminate_ctes",
+          "tests/test_optimizer.py::TestOptimizer::test_eliminate_subqueries",
+          "tests/test_optimizer.py::TestOptimizer::test_normalize",
+          "tests/test_optimizer.py::TestOptimizer::test_normalize_identifiers",
+          "tests/test_optimizer.py::TestOptimizer::test_optimize_joins",
+          "tests/test_optimizer.py::TestOptimizer::test_qualify_columns__with_invisible",
+          "tests/test_optimizer.py::TestOptimizer::test_qualify_order_by_source_columns",
+          "tests/test_serde.py::TestSerde::test_custom_expression",
+          "tests/test_serde.py::TestSerde::test_meta",
+          "tests/test_serde.py::TestSerde::test_recursion",
+          "tests/test_serde.py::TestSerde::test_serde",
+          "tests/test_serde.py::TestSerde::test_type_annotations"
+        ]
+      },
+      {
+        "commit": "6vvp",
+        "missing": [
+          "tests/test_optimizer.py::TestOptimizer::test_qualify_columns__invalid"
+        ]
+      },
+      {
+        "commit": "6ze8",
+        "missing": [
+          "tests/dialects/test_dremio.py::TestDremio::test_regexp_split"
+        ]
+      },
+      {
+        "commit": "ary6",
+        "missing": [
+          "tests/dialects/test_bigquery.py::TestBigQuery::test_information_schema_roundtrip",
+          "tests/dialects/test_bigquery.py::TestBigQuery::test_ml_functions",
+          "tests/dialects/test_bigquery.py::TestBigQuery::test_quoted_identifier_meta",
+          "tests/test_expressions.py::TestExprs::test_replace_tables",
+          "tests/test_parser.py::TestParser::test_ref_type"
+        ]
+      },
+      {
+        "commit": "bj7g",
+        "missing": [
+          "tests/dialects/test_clickhouse.py::TestClickhouse::test_clickhouse_values"
+        ]
+      }
+    ]
+  },
+  "failures_unique_to_one_commit": [
+    {
+      "commit": "2jrq",
+      "kind": "code",
+      "unique_failing": [
+        {
+          "number": 1104,
+          "id": "tests/test_executor.py::TestExecutor::test_execute_subqueries"
+        },
+        {
+          "number": 1369,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_optimize_special_joins"
+        },
+        {
+          "number": 1381,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_pushdown_projections_prunes_non_self_referencing_ctes"
+        }
+      ]
+    },
+    {
+      "commit": "3utz",
+      "kind": "code",
+      "unique_failing": [
+        {
+          "number": 139,
+          "id": "tests/dialects/test_databricks.py::TestDatabricks::test_optimize"
+        },
+        {
+          "number": 909,
+          "id": "tests/dialects/test_teradata.py::TestTeradata::test_execute"
+        },
+        {
+          "number": 914,
+          "id": "tests/dialects/test_teradata.py::TestTeradata::test_hex_character_string"
+        },
+        {
+          "number": 919,
+          "id": "tests/dialects/test_teradata.py::TestTeradata::test_named"
+        },
+        {
+          "number": 921,
+          "id": "tests/dialects/test_teradata.py::TestTeradata::test_named_attribute_order"
+        },
+        {
+          "number": 927,
+          "id": "tests/dialects/test_teradata.py::TestTeradata::test_title"
+        },
+        {
+          "number": 1107,
+          "id": "tests/test_executor.py::TestExecutor::test_execute_tpch"
+        },
+        {
+          "number": 1185,
+          "id": "tests/test_expressions.py::TestExprs::test_ref_type_builder"
+        },
+        {
+          "number": 1313,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_canonicalize"
+        },
+        {
+          "number": 1314,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_canonicalize_internal_names"
+        },
+        {
+          "number": 1324,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_eliminate_ctes"
+        },
+        {
+          "number": 1327,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_eliminate_subqueries"
+        },
+        {
+          "number": 1352,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_normalize"
+        },
+        {
+          "number": 1353,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_normalize_identifiers"
+        },
+        {
+          "number": 1362,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_optimize_joins"
+        },
+        {
+          "number": 1384,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_qualify_columns__with_invisible"
+        },
+        {
+          "number": 1397,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_qualify_order_by_source_columns"
+        },
+        {
+          "number": 1558,
+          "id": "tests/test_serde.py::TestSerde::test_custom_expression"
+        },
+        {
+          "number": 1559,
+          "id": "tests/test_serde.py::TestSerde::test_meta"
+        },
+        {
+          "number": 1560,
+          "id": "tests/test_serde.py::TestSerde::test_recursion"
+        },
+        {
+          "number": 1561,
+          "id": "tests/test_serde.py::TestSerde::test_serde"
+        },
+        {
+          "number": 1562,
+          "id": "tests/test_serde.py::TestSerde::test_type_annotations"
+        }
+      ]
+    },
+    {
+      "commit": "6vvp",
+      "kind": "fixture",
+      "unique_failing": [
+        {
+          "number": 1383,
+          "id": "tests/test_optimizer.py::TestOptimizer::test_qualify_columns__invalid"
+        }
+      ]
+    },
+    {
+      "commit": "6ze8",
+      "kind": "code",
+      "unique_failing": [
+        {
+          "number": 302,
+          "id": "tests/dialects/test_dremio.py::TestDremio::test_regexp_split"
+        }
+      ]
+    },
+    {
+      "commit": "ary6",
+      "kind": "code",
+      "unique_failing": [
+        {
+          "number": 42,
+          "id": "tests/dialects/test_bigquery.py::TestBigQuery::test_information_schema_roundtrip"
+        },
+        {
+          "number": 54,
+          "id": "tests/dialects/test_bigquery.py::TestBigQuery::test_ml_functions"
+        },
+        {
+          "number": 64,
+          "id": "tests/dialects/test_bigquery.py::TestBigQuery::test_quoted_identifier_meta"
+        },
+        {
+          "number": 1189,
+          "id": "tests/test_expressions.py::TestExprs::test_replace_tables"
+        },
+        {
+          "number": 1519,
+          "id": "tests/test_parser.py::TestParser::test_ref_type"
+        }
+      ]
+    },
+    {
+      "commit": "bj7g",
+      "kind": "code",
+      "unique_failing": [
+        {
+          "number": 94,
+          "id": "tests/dialects/test_clickhouse.py::TestClickhouse::test_clickhouse_values"
+        }
+      ]
+    }
+  ]
+}

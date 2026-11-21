@@ -1,0 +1,62 @@
+{
+  "repeat": 5,
+  "process_seconds_min": 0.046875,
+  "process_seconds_median": 0.0625,
+  "process_seconds_max": 0.0625,
+  "samples": [
+    {
+      "process_seconds": 0.0625,
+      "wall_seconds": 0.060449,
+      "commits": 30
+    },
+    {
+      "process_seconds": 0.0625,
+      "wall_seconds": 0.065124,
+      "commits": 30
+    },
+    {
+      "process_seconds": 0.046875,
+      "wall_seconds": 0.064636,
+      "commits": 30
+    },
+    {
+      "process_seconds": 0.0625,
+      "wall_seconds": 0.062106,
+      "commits": 30
+    },
+    {
+      "process_seconds": 0.0625,
+      "wall_seconds": 0.06128,
+      "commits": 30
+    }
+  ],
+  "note": "process_seconds is this interpreter, not the contest container's user+system time. The board adds container CPU on top of simulated seconds.",
+  "docker": {
+    "ok": true,
+    "cpu": {
+      "process_seconds": 0.194414,
+      "ru_utime": 0.2512,
+      "ru_stime": 0.07064999999999999,
+      "maxrss_kb": 23268,
+      "commits": 30
+    },
+    "stdout_sha256": [
+      "8705fbd5bbf55fdd781386ab5a9c7f323797973b46479d23302137420f4c8fec",
+      "8705fbd5bbf55fdd781386ab5a9c7f323797973b46479d23302137420f4c8fec"
+    ],
+    "stdout_identical": true,
+    "scores": [
+      {
+        "ok": true,
+        "simulated_ms": 482337,
+        "misses": []
+      },
+      {
+        "ok": true,
+        "simulated_ms": 482337,
+        "misses": []
+      }
+    ],
+    "scores_identical": true
+  }
+}

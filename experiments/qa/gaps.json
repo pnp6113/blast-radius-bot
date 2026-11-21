@@ -1,0 +1,1346 @@
+{
+  "source": "eb11aec4be8cb2122afe713a4816662c3f0fb2fa",
+  "catalog_gaps": [
+    {
+      "id": "typing-pkgutil-walk",
+      "test_id": "tests/test_typing.py::TestTyping::test_no_redundant_expression_metadata",
+      "path": "sqlglot/typing/snowflake.py",
+      "reason": "The test importlib-loads every sqlglot.typing module through an f-string. The map records string constants, not that walk.",
+      "test_number": 1619,
+      "mapped_tests_on_path": 360,
+      "selected_by_current_map": false
+    },
+    {
+      "id": "lazy-dialect-class-import",
+      "test_id": "tests/test_dialect_imports.py::TestDialectImports::test_dialect_import_no_deadlock",
+      "path": "sqlglot/dialects/athena.py",
+      "reason": "The test imports Athena inside the test body. athena.py is already in the near-full import closure, so the map selects this test for a different reason. The lazy import itself is not an edge.",
+      "test_number": 1054,
+      "mapped_tests_on_path": 1617,
+      "selected_by_current_map": true
+    },
+    {
+      "id": "lazy-dialect-attribute",
+      "test_id": "tests/test_dialect_imports.py::TestDialectImports::test_dialect_attribute_access_is_cached",
+      "path": "sqlglot/dialects/snowflake.py",
+      "reason": "The test loads sqlglot.dialects.Snowflake by attribute, not by a string constant.",
+      "test_number": 1053,
+      "mapped_tests_on_path": 360,
+      "selected_by_current_map": false
+    }
+  ],
+  "dialect_fanout": [
+    {
+      "path": "sqlglot/dialects/mysql.py",
+      "mapped_tests": 1619
+    },
+    {
+      "path": "sqlglot/dialects/athena.py",
+      "mapped_tests": 1617
+    },
+    {
+      "path": "sqlglot/dialects/dialect.py",
+      "mapped_tests": 1617
+    },
+    {
+      "path": "sqlglot/dialects/hive.py",
+      "mapped_tests": 1617
+    },
+    {
+      "path": "sqlglot/dialects/presto.py",
+      "mapped_tests": 1617
+    },
+    {
+      "path": "sqlglot/dialects/trino.py",
+      "mapped_tests": 1617
+    },
+    {
+      "path": "sqlglot/dialects/tsql.py",
+      "mapped_tests": 1617
+    },
+    {
+      "path": "sqlglot/dialects/duckdb.py",
+      "mapped_tests": 1112
+    },
+    {
+      "path": "sqlglot/dialects/snowflake.py",
+      "mapped_tests": 360
+    },
+    {
+      "path": "sqlglot/dialects/bigquery.py",
+      "mapped_tests": 294
+    },
+    {
+      "path": "sqlglot/dialects/postgres.py",
+      "mapped_tests": 283
+    },
+    {
+      "path": "sqlglot/dialects/spark.py",
+      "mapped_tests": 262
+    },
+    {
+      "path": "sqlglot/dialects/databricks.py",
+      "mapped_tests": 170
+    },
+    {
+      "path": "sqlglot/dialects/clickhouse.py",
+      "mapped_tests": 149
+    },
+    {
+      "path": "sqlglot/dialects/oracle.py",
+      "mapped_tests": 135
+    },
+    {
+      "path": "sqlglot/dialects/sqlite.py",
+      "mapped_tests": 116
+    },
+    {
+      "path": "sqlglot/dialects/redshift.py",
+      "mapped_tests": 107
+    },
+    {
+      "path": "sqlglot/dialects/teradata.py",
+      "mapped_tests": 74
+    },
+    {
+      "path": "sqlglot/dialects/starrocks.py",
+      "mapped_tests": 72
+    },
+    {
+      "path": "sqlglot/dialects/spark2.py",
+      "mapped_tests": 67
+    },
+    {
+      "path": "sqlglot/dialects/exasol.py",
+      "mapped_tests": 45
+    },
+    {
+      "path": "sqlglot/dialects/doris.py",
+      "mapped_tests": 43
+    },
+    {
+      "path": "sqlglot/dialects/singlestore.py",
+      "mapped_tests": 41
+    },
+    {
+      "path": "sqlglot/dialects/dremio.py",
+      "mapped_tests": 36
+    },
+    {
+      "path": "sqlglot/dialects/drill.py",
+      "mapped_tests": 35
+    },
+    {
+      "path": "sqlglot/dialects/risingwave.py",
+      "mapped_tests": 16
+    },
+    {
+      "path": "sqlglot/dialects/tableau.py",
+      "mapped_tests": 16
+    },
+    {
+      "path": "sqlglot/dialects/materialize.py",
+      "mapped_tests": 15
+    },
+    {
+      "path": "sqlglot/dialects/fabric.py",
+      "mapped_tests": 14
+    },
+    {
+      "path": "sqlglot/dialects/dax.py",
+      "mapped_tests": 10
+    },
+    {
+      "path": "sqlglot/dialects/druid.py",
+      "mapped_tests": 7
+    },
+    {
+      "path": "sqlglot/dialects/dune.py",
+      "mapped_tests": 7
+    },
+    {
+      "path": "sqlglot/dialects/prql.py",
+      "mapped_tests": 6
+    },
+    {
+      "path": "sqlglot/dialects/solr.py",
+      "mapped_tests": 6
+    }
+  ],
+  "core_dialect_bridges": [
+    {
+      "importer": "sqlglot/generator.py",
+      "imports": "sqlglot/dialects/tsql.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": true
+    },
+    {
+      "importer": "sqlglot/dialects/athena.py",
+      "imports": "sqlglot/dialects/trino.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": false
+    },
+    {
+      "importer": "sqlglot/dialects/athena.py",
+      "imports": "sqlglot/dialects/hive.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": false
+    },
+    {
+      "importer": "sqlglot/dialects/presto.py",
+      "imports": "sqlglot/dialects/mysql.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": false
+    },
+    {
+      "importer": "sqlglot/dialects/trino.py",
+      "imports": "sqlglot/dialects/presto.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": false
+    },
+    {
+      "importer": "sqlglot/generators/athena.py",
+      "imports": "sqlglot/dialects/hive.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": true
+    },
+    {
+      "importer": "sqlglot/generators/athena.py",
+      "imports": "sqlglot/dialects/trino.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": true
+    },
+    {
+      "importer": "sqlglot/generators/presto.py",
+      "imports": "sqlglot/dialects/hive.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": false
+    },
+    {
+      "importer": "sqlglot/generators/presto.py",
+      "imports": "sqlglot/dialects/presto.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": true
+    },
+    {
+      "importer": "sqlglot/generators/tsql.py",
+      "imports": "sqlglot/dialects/tsql.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": true
+    },
+    {
+      "importer": "sqlglot/generators/tsql.py",
+      "imports": "sqlglot/dialects/tsql.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": true
+    },
+    {
+      "importer": "sqlglot/optimizer/pushdown_predicates.py",
+      "imports": "sqlglot/dialects/athena.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": true
+    },
+    {
+      "importer": "sqlglot/optimizer/pushdown_predicates.py",
+      "imports": "sqlglot/dialects/presto.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": true
+    },
+    {
+      "importer": "sqlglot/parsers/athena.py",
+      "imports": "sqlglot/dialects/hive.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": false
+    },
+    {
+      "importer": "sqlglot/parsers/athena.py",
+      "imports": "sqlglot/dialects/trino.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": false
+    },
+    {
+      "importer": "sqlglot/parsers/athena.py",
+      "imports": "sqlglot/dialects/hive.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": true
+    },
+    {
+      "importer": "sqlglot/parsers/athena.py",
+      "imports": "sqlglot/dialects/trino.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": true
+    },
+    {
+      "importer": "sqlglot/parsers/presto.py",
+      "imports": "sqlglot/dialects/presto.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": true
+    },
+    {
+      "importer": "sqlglot/parsers/tsql.py",
+      "imports": "sqlglot/dialects/tsql.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": true
+    },
+    {
+      "importer": "sqlglot/parsers/tsql.py",
+      "imports": "sqlglot/dialects/tsql.py",
+      "importer_mapped_tests": 1617,
+      "nested_in_function": true
+    },
+    {
+      "importer": "sqlglot/dialects/starrocks.py",
+      "imports": "sqlglot/dialects/mysql.py",
+      "importer_mapped_tests": 72,
+      "nested_in_function": false
+    },
+    {
+      "importer": "sqlglot/dialects/spark2.py",
+      "imports": "sqlglot/dialects/hive.py",
+      "importer_mapped_tests": 67,
+      "nested_in_function": false
+    },
+    {
+      "importer": "sqlglot/dialects/doris.py",
+      "imports": "sqlglot/dialects/mysql.py",
+      "importer_mapped_tests": 43,
+      "nested_in_function": false
+    },
+    {
+      "importer": "sqlglot/dialects/singlestore.py",
+      "imports": "sqlglot/dialects/mysql.py",
+      "importer_mapped_tests": 41,
+      "nested_in_function": false
+    },
+    {
+      "importer": "sqlglot/parsers/singlestore.py",
+      "imports": "sqlglot/dialects/mysql.py",
+      "importer_mapped_tests": 41,
+      "nested_in_function": false
+    },
+    {
+      "importer": "sqlglot/dialects/fabric.py",
+      "imports": "sqlglot/dialects/tsql.py",
+      "importer_mapped_tests": 14,
+      "nested_in_function": false
+    },
+    {
+      "importer": "sqlglot/dialects/dune.py",
+      "imports": "sqlglot/dialects/trino.py",
+      "importer_mapped_tests": 7,
+      "nested_in_function": false
+    }
+  ],
+  "dynamic_walks": [
+    {
+      "test_file": "tests/test_typing.py",
+      "function": "test_no_redundant_expression_metadata",
+      "prefix": "sqlglot.typing",
+      "module": "sqlglot/typing/bigquery.py",
+      "missing_tests": [
+        1619
+      ]
+    },
+    {
+      "test_file": "tests/test_typing.py",
+      "function": "test_no_redundant_expression_metadata",
+      "prefix": "sqlglot.typing",
+      "module": "sqlglot/typing/clickhouse.py",
+      "missing_tests": [
+        1619
+      ]
+    },
+    {
+      "test_file": "tests/test_typing.py",
+      "function": "test_no_redundant_expression_metadata",
+      "prefix": "sqlglot.typing",
+      "module": "sqlglot/typing/databricks.py",
+      "missing_tests": [
+        1619
+      ]
+    },
+    {
+      "test_file": "tests/test_typing.py",
+      "function": "test_no_redundant_expression_metadata",
+      "prefix": "sqlglot.typing",
+      "module": "sqlglot/typing/duckdb.py",
+      "missing_tests": [
+        1619
+      ]
+    },
+    {
+      "test_file": "tests/test_typing.py",
+      "function": "test_no_redundant_expression_metadata",
+      "prefix": "sqlglot.typing",
+      "module": "sqlglot/typing/postgres.py",
+      "missing_tests": [
+        1619
+      ]
+    },
+    {
+      "test_file": "tests/test_typing.py",
+      "function": "test_no_redundant_expression_metadata",
+      "prefix": "sqlglot.typing",
+      "module": "sqlglot/typing/redshift.py",
+      "missing_tests": [
+        1619
+      ]
+    },
+    {
+      "test_file": "tests/test_typing.py",
+      "function": "test_no_redundant_expression_metadata",
+      "prefix": "sqlglot.typing",
+      "module": "sqlglot/typing/snowflake.py",
+      "missing_tests": [
+        1619
+      ]
+    },
+    {
+      "test_file": "tests/test_typing.py",
+      "function": "test_no_redundant_expression_metadata",
+      "prefix": "sqlglot.typing",
+      "module": "sqlglot/typing/spark.py",
+      "missing_tests": [
+        1619
+      ]
+    },
+    {
+      "test_file": "tests/test_typing.py",
+      "function": "test_no_redundant_expression_metadata",
+      "prefix": "sqlglot.typing",
+      "module": "sqlglot/typing/spark2.py",
+      "missing_tests": [
+        1619
+      ]
+    },
+    {
+      "test_file": "tests/test_typing.py",
+      "function": "test_no_redundant_expression_metadata",
+      "prefix": "sqlglot.typing",
+      "module": "sqlglot/typing/sqlite.py",
+      "missing_tests": [
+        1619
+      ]
+    }
+  ],
+  "lazy_dialect_imports": [
+    {
+      "test_file": "tests/test_dialect_imports.py",
+      "scope": "test_dialect_attribute_access_is_cached",
+      "dialect": "snowflake",
+      "module": "sqlglot/dialects/snowflake.py",
+      "missing_tests": [
+        {
+          "number": 1053,
+          "id": "tests/test_dialect_imports.py::TestDialectImports::test_dialect_attribute_access_is_cached"
+        }
+      ]
+    },
+    {
+      "test_file": "tests/test_tokens.py",
+      "scope": "module",
+      "dialect": "bigquery",
+      "module": "sqlglot/dialects/bigquery.py",
+      "missing_tests": [
+        {
+          "number": 1572,
+          "id": "tests/test_tokens.py::TestTokens::test_command"
+        },
+        {
+          "number": 1573,
+          "id": "tests/test_tokens.py::TestTokens::test_comment_attachment"
+        },
+        {
+          "number": 1574,
+          "id": "tests/test_tokens.py::TestTokens::test_comment_inside_space_keywords"
+        },
+        {
+          "number": 1575,
+          "id": "tests/test_tokens.py::TestTokens::test_crlf"
+        },
+        {
+          "number": 1576,
+          "id": "tests/test_tokens.py::TestTokens::test_error_msg"
+        },
+        {
+          "number": 1577,
+          "id": "tests/test_tokens.py::TestTokens::test_jinja"
+        },
+        {
+          "number": 1578,
+          "id": "tests/test_tokens.py::TestTokens::test_partial_token_list"
+        },
+        {
+          "number": 1579,
+          "id": "tests/test_tokens.py::TestTokens::test_space_keywords"
+        },
+        {
+          "number": 1580,
+          "id": "tests/test_tokens.py::TestTokens::test_token_line_col"
+        },
+        {
+          "number": 1581,
+          "id": "tests/test_tokens.py::TestTokens::test_token_repr"
+        },
+        {
+          "number": 1582,
+          "id": "tests/test_tokens.py::TestTokens::test_unicode_identifiers"
+        }
+      ]
+    },
+    {
+      "test_file": "tests/dialects/test_dialect.py",
+      "scope": "module",
+      "dialect": "bigquery",
+      "module": "sqlglot/dialects/bigquery.py",
+      "missing_tests": [
+        {
+          "number": 162,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_agg"
+        },
+        {
+          "number": 167,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_between"
+        },
+        {
+          "number": 170,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_coalesce"
+        },
+        {
+          "number": 171,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_compare_dialect_versions"
+        },
+        {
+          "number": 173,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_count_if"
+        },
+        {
+          "number": 174,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_create_sequence"
+        },
+        {
+          "number": 175,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_cross_join"
+        },
+        {
+          "number": 177,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_current_schema"
+        },
+        {
+          "number": 178,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_custom_dialect"
+        },
+        {
+          "number": 182,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_decimal_literals"
+        },
+        {
+          "number": 183,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_decode"
+        },
+        {
+          "number": 185,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_escaped_identifier_delimiter"
+        },
+        {
+          "number": 189,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_filter_within_group"
+        },
+        {
+          "number": 196,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_heredoc_strings"
+        },
+        {
+          "number": 201,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_interval_with_units_dcolon"
+        },
+        {
+          "number": 202,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_is_ascii"
+        },
+        {
+          "number": 204,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_is_with_dcolon"
+        },
+        {
+          "number": 208,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_json_keys"
+        },
+        {
+          "number": 213,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_lateral_subquery"
+        },
+        {
+          "number": 214,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_lazy_load"
+        },
+        {
+          "number": 219,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_median"
+        },
+        {
+          "number": 221,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_multiple_chained_unnest"
+        },
+        {
+          "number": 224,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_nullsafe_eq"
+        },
+        {
+          "number": 225,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_nullsafe_neq"
+        },
+        {
+          "number": 227,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_operator"
+        },
+        {
+          "number": 230,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_parse_at_time_zone"
+        },
+        {
+          "number": 232,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_patch_dialect_parser"
+        },
+        {
+          "number": 233,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_per"
+        },
+        {
+          "number": 235,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_qualify"
+        },
+        {
+          "number": 239,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regr_count"
+        },
+        {
+          "number": 240,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regr_intercept"
+        },
+        {
+          "number": 241,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regr_r2"
+        },
+        {
+          "number": 242,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regr_slope"
+        },
+        {
+          "number": 243,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regr_sxx"
+        },
+        {
+          "number": 244,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regr_sxy"
+        },
+        {
+          "number": 245,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regr_syy"
+        },
+        {
+          "number": 246,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_reserved_keywords"
+        },
+        {
+          "number": 248,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_safediv"
+        },
+        {
+          "number": 250,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_set_operation_precedence"
+        },
+        {
+          "number": 254,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_spark2_negative_scale_decimal_literals"
+        },
+        {
+          "number": 255,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_string_functions"
+        },
+        {
+          "number": 256,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_subquery_unwrap"
+        },
+        {
+          "number": 258,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_table_query"
+        },
+        {
+          "number": 260,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_to_binary"
+        },
+        {
+          "number": 264,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_truncate"
+        },
+        {
+          "number": 265,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_typeddiv"
+        },
+        {
+          "number": 266,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_underscore_scientific_notation"
+        },
+        {
+          "number": 268,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_unsupported_null_ordering"
+        },
+        {
+          "number": 269,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_update"
+        },
+        {
+          "number": 271,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_values_with_pivot"
+        },
+        {
+          "number": 272,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_week_of_year"
+        },
+        {
+          "number": 273,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_window_exclude"
+        }
+      ]
+    },
+    {
+      "test_file": "tests/dialects/test_dialect.py",
+      "scope": "module",
+      "dialect": "snowflake",
+      "module": "sqlglot/dialects/snowflake.py",
+      "missing_tests": [
+        {
+          "number": 162,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_agg"
+        },
+        {
+          "number": 167,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_between"
+        },
+        {
+          "number": 169,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_cast_to_user_defined_type"
+        },
+        {
+          "number": 170,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_coalesce"
+        },
+        {
+          "number": 171,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_compare_dialect_versions"
+        },
+        {
+          "number": 174,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_create_sequence"
+        },
+        {
+          "number": 175,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_cross_join"
+        },
+        {
+          "number": 177,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_current_schema"
+        },
+        {
+          "number": 178,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_custom_dialect"
+        },
+        {
+          "number": 179,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_date_delta_missing_arguments"
+        },
+        {
+          "number": 182,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_decimal_literals"
+        },
+        {
+          "number": 186,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_farm_fingerprint"
+        },
+        {
+          "number": 187,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_fetch_first_implicit_count"
+        },
+        {
+          "number": 190,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_format"
+        },
+        {
+          "number": 191,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_from_to_base32"
+        },
+        {
+          "number": 193,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_get_or_raise"
+        },
+        {
+          "number": 195,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_hash_comments"
+        },
+        {
+          "number": 196,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_heredoc_strings"
+        },
+        {
+          "number": 197,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_if_null"
+        },
+        {
+          "number": 199,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_initcap_custom_delimiter_warning"
+        },
+        {
+          "number": 201,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_interval_with_units_dcolon"
+        },
+        {
+          "number": 202,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_is_ascii"
+        },
+        {
+          "number": 203,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_is_unknown"
+        },
+        {
+          "number": 204,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_is_with_dcolon"
+        },
+        {
+          "number": 206,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_json_array_append"
+        },
+        {
+          "number": 207,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_json_array_insert"
+        },
+        {
+          "number": 209,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_json_remove"
+        },
+        {
+          "number": 210,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_json_set"
+        },
+        {
+          "number": 211,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_json_strip_nulls"
+        },
+        {
+          "number": 212,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_justify"
+        },
+        {
+          "number": 213,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_lateral_subquery"
+        },
+        {
+          "number": 214,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_lazy_load"
+        },
+        {
+          "number": 217,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_localtime_and_localtimestamp"
+        },
+        {
+          "number": 221,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_multiple_chained_unnest"
+        },
+        {
+          "number": 223,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_normalize"
+        },
+        {
+          "number": 224,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_nullsafe_eq"
+        },
+        {
+          "number": 225,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_nullsafe_neq"
+        },
+        {
+          "number": 227,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_operator"
+        },
+        {
+          "number": 229,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_order_by"
+        },
+        {
+          "number": 230,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_parse_at_time_zone"
+        },
+        {
+          "number": 233,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_per"
+        },
+        {
+          "number": 234,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_preserve_original_names"
+        },
+        {
+          "number": 236,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_random"
+        },
+        {
+          "number": 238,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regexp_replace"
+        },
+        {
+          "number": 246,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_reserved_keywords"
+        },
+        {
+          "number": 249,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_session_user"
+        },
+        {
+          "number": 250,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_set_operation_precedence"
+        },
+        {
+          "number": 252,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_set_operators"
+        },
+        {
+          "number": 254,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_spark2_negative_scale_decimal_literals"
+        },
+        {
+          "number": 256,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_subquery_unwrap"
+        },
+        {
+          "number": 257,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_substring"
+        },
+        {
+          "number": 264,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_truncate"
+        },
+        {
+          "number": 265,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_typeddiv"
+        },
+        {
+          "number": 266,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_underscore_scientific_notation"
+        },
+        {
+          "number": 267,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_unix_time"
+        },
+        {
+          "number": 268,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_unsupported_null_ordering"
+        },
+        {
+          "number": 269,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_update"
+        },
+        {
+          "number": 273,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_window_exclude"
+        }
+      ]
+    },
+    {
+      "test_file": "tests/dialects/test_dialect.py",
+      "scope": "module",
+      "dialect": "spark2",
+      "module": "sqlglot/dialects/spark2.py",
+      "missing_tests": [
+        {
+          "number": 162,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_agg"
+        },
+        {
+          "number": 166,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_ascii"
+        },
+        {
+          "number": 167,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_between"
+        },
+        {
+          "number": 168,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_cast"
+        },
+        {
+          "number": 169,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_cast_to_user_defined_type"
+        },
+        {
+          "number": 170,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_coalesce"
+        },
+        {
+          "number": 171,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_compare_dialect_versions"
+        },
+        {
+          "number": 172,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_compare_dialects"
+        },
+        {
+          "number": 173,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_count_if"
+        },
+        {
+          "number": 174,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_create_sequence"
+        },
+        {
+          "number": 176,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_current_catalog"
+        },
+        {
+          "number": 177,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_current_schema"
+        },
+        {
+          "number": 178,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_custom_dialect"
+        },
+        {
+          "number": 179,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_date_delta_missing_arguments"
+        },
+        {
+          "number": 180,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_date_to_unix_date"
+        },
+        {
+          "number": 181,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_ddl"
+        },
+        {
+          "number": 183,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_decode"
+        },
+        {
+          "number": 186,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_farm_fingerprint"
+        },
+        {
+          "number": 187,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_fetch_first_implicit_count"
+        },
+        {
+          "number": 188,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_filter"
+        },
+        {
+          "number": 189,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_filter_within_group"
+        },
+        {
+          "number": 191,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_from_to_base32"
+        },
+        {
+          "number": 192,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_generate_date_array"
+        },
+        {
+          "number": 193,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_get_or_raise"
+        },
+        {
+          "number": 195,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_hash_comments"
+        },
+        {
+          "number": 196,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_heredoc_strings"
+        },
+        {
+          "number": 197,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_if_null"
+        },
+        {
+          "number": 198,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_initcap"
+        },
+        {
+          "number": 199,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_initcap_custom_delimiter_warning"
+        },
+        {
+          "number": 200,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_integer_hex_strings"
+        },
+        {
+          "number": 201,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_interval_with_units_dcolon"
+        },
+        {
+          "number": 202,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_is_ascii"
+        },
+        {
+          "number": 203,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_is_unknown"
+        },
+        {
+          "number": 204,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_is_with_dcolon"
+        },
+        {
+          "number": 205,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_json"
+        },
+        {
+          "number": 206,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_json_array_append"
+        },
+        {
+          "number": 207,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_json_array_insert"
+        },
+        {
+          "number": 208,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_json_keys"
+        },
+        {
+          "number": 209,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_json_remove"
+        },
+        {
+          "number": 210,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_json_set"
+        },
+        {
+          "number": 211,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_json_strip_nulls"
+        },
+        {
+          "number": 212,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_justify"
+        },
+        {
+          "number": 213,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_lateral_subquery"
+        },
+        {
+          "number": 214,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_lazy_load"
+        },
+        {
+          "number": 215,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_like_quantifiers"
+        },
+        {
+          "number": 216,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_limit"
+        },
+        {
+          "number": 219,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_median"
+        },
+        {
+          "number": 220,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_merge"
+        },
+        {
+          "number": 221,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_multiple_chained_unnest"
+        },
+        {
+          "number": 223,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_normalize"
+        },
+        {
+          "number": 224,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_nullsafe_eq"
+        },
+        {
+          "number": 225,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_nullsafe_neq"
+        },
+        {
+          "number": 227,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_operator"
+        },
+        {
+          "number": 229,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_order_by"
+        },
+        {
+          "number": 230,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_parse_at_time_zone"
+        },
+        {
+          "number": 232,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_patch_dialect_parser"
+        },
+        {
+          "number": 233,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_per"
+        },
+        {
+          "number": 234,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_preserve_original_names"
+        },
+        {
+          "number": 235,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_qualify"
+        },
+        {
+          "number": 236,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_random"
+        },
+        {
+          "number": 237,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regexp_instr"
+        },
+        {
+          "number": 238,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regexp_replace"
+        },
+        {
+          "number": 239,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regr_count"
+        },
+        {
+          "number": 240,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regr_intercept"
+        },
+        {
+          "number": 241,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regr_r2"
+        },
+        {
+          "number": 242,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regr_slope"
+        },
+        {
+          "number": 243,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regr_sxx"
+        },
+        {
+          "number": 244,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regr_sxy"
+        },
+        {
+          "number": 245,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_regr_syy"
+        },
+        {
+          "number": 246,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_reserved_keywords"
+        },
+        {
+          "number": 248,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_safediv"
+        },
+        {
+          "number": 249,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_session_user"
+        },
+        {
+          "number": 250,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_set_operation_precedence"
+        },
+        {
+          "number": 251,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_set_operation_specifiers"
+        },
+        {
+          "number": 252,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_set_operators"
+        },
+        {
+          "number": 256,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_subquery_unwrap"
+        },
+        {
+          "number": 257,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_substring"
+        },
+        {
+          "number": 258,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_table_query"
+        },
+        {
+          "number": 259,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_time"
+        },
+        {
+          "number": 260,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_to_binary"
+        },
+        {
+          "number": 261,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_transactions"
+        },
+        {
+          "number": 264,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_truncate"
+        },
+        {
+          "number": 265,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_typeddiv"
+        },
+        {
+          "number": 266,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_underscore_scientific_notation"
+        },
+        {
+          "number": 267,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_unix_time"
+        },
+        {
+          "number": 268,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_unsupported_null_ordering"
+        },
+        {
+          "number": 269,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_update"
+        },
+        {
+          "number": 271,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_values_with_pivot"
+        },
+        {
+          "number": 272,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_week_of_year"
+        },
+        {
+          "number": 273,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_window_exclude"
+        },
+        {
+          "number": 274,
+          "id": "tests/dialects/test_dialect.py::TestDialect::test_window_funcs_requiring_order"
+        }
+      ]
+    }
+  ],
+  "shared_utility": {
+    "sqlglot/helper.py": {
+      "mapped_tests": 1617
+    },
+    "sqlglot/dialects/dialect.py": {
+      "mapped_tests": 1617
+    },
+    "sqlglot/parser.py": {
+      "mapped_tests": 1617
+    },
+    "sqlglot/tokens.py": {
+      "mapped_tests": 1617
+    },
+    "sqlglot/expressions/__init__.py": {
+      "mapped_tests": 1617
+    },
+    "sqlglot/optimizer/__init__.py": {
+      "mapped_tests": 1617
+    },
+    "sqlglot/optimizer/optimizer.py": {
+      "mapped_tests": 1617
+    },
+    "sqlglot/optimizer/scope.py": {
+      "mapped_tests": 1617
+    }
+  }
+}

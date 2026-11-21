@@ -148,7 +148,17 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
 
             live_save = max(0.0, sim(cand) - min(sim({number}) for number in cand))
             if not big and cpu_est(cheap) >= P_PASS[kind] * sim(cand) + (1 - P_PASS[kind]) * live_save:
-                sel, how = set(cand), "include-all(EV)"
+                # A numeric change in a dialect file fans out to every user of that dialect. Probing the
+                # dialect's own test module is a couple of seconds; if those pass, the rest of the fan-out
+                # did not observe the new value. Including all of them is the 9 second commit.
+                witness = _dialect_witness(parsed, cheap, by, src, files)
+                if witness and cpu_est(witness) < sim(set(cheap)):
+                    if run(files, witness, plan):
+                        sel, how = set(cand), "include-all(EV)"
+                    else:
+                        sel, how = set(), "dialect-witness-pass"
+                else:
+                    sel, how = set(cand), "include-all(EV)"
             else:
                 stage, acc = [], 0.0
                 for number in cheap:
@@ -232,6 +242,28 @@ class _BlankConsts(ast.NodeTransformer):
     def visit_Constant(self, node):
         node.value = None
         return node
+
+
+def _dialect_witness(parsed, cand, by, src, files) -> list:
+    """Candidates that live in the dialect's own test module, for a numbers-only dialect edit."""
+    py = [item for item in parsed if item["new"].endswith(".py")]
+    if not py or any(not item["new"].startswith("sqlglot/dialects/") or item["new"].endswith("/__init__.py") for item in py):
+        return []
+    stems = []
+    for item in parsed:
+        path = item["new"]
+        if not path.endswith(".py"):
+            continue
+        old_path = src / path
+        if not old_path.is_file() or path not in files:
+            return []
+        if not _numeric_constants_only(old_path.read_text(encoding="utf-8"), files[path]):
+            return []
+        stems.append(Path(path).stem)
+    if not stems:
+        return []
+    wanted = {f"tests/dialects/test_{stem}.py" for stem in stems}
+    return [number for number in cand if by[number]["file"] in wanted]
 
 
 def _numeric_constants_only(old: str, new: str) -> bool:

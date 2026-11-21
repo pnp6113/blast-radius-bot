@@ -14,6 +14,8 @@ import re
 import sys
 from pathlib import Path
 
+import time as _time
+
 from blast.engine import CommitPlan
 from blast.load import durations_ms, load_tests
 from blast.patch import comment_only_heuristic, read_patches
@@ -28,6 +30,7 @@ P_PASS = {
     "fixture": float(os.environ.get("BLAST_P2_PPASS_FIX", "0.02")),
 }
 S1 = float(os.environ.get("BLAST_P10_S1", "0.3"))
+_T0 = _time.monotonic()  # process start (import of this module), the clock the batch limit runs on
 LIVE_P = float(os.environ.get("BLAST_P10_LIVE_P", "0.5"))
 
 
@@ -150,7 +153,16 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
         except ImportError:
             return 0.0
 
+    # Wall-clock budget for probing: the batch limit is 3 min (4.5 min above 45 commits). Past the budget the
+    # remaining commits get their static candidates, so a slow batch cannot time out the whole run.
+    import time
+    limit = 180.0 if len(diffs) <= 45 else 270.0
+    deadline = _T0 + float(os.environ.get("BLAST_P10_BUDGET", "0.5")) * limit
     for commit, cand, files, parsed, notes in jobs:
+        if time.monotonic() > deadline:
+            print(f"{commit} p10: budget spent -> static cand={len(cand)}", file=sys.stderr, flush=True)
+            out[commit] = (sorted(cand), False, ["p10: budget spent -> static", *_fmt(notes)])
+            continue
         tick = _used()
         kind = "fixture" if parsed and all(item["new"].startswith("tests/fixtures/") for item in parsed) else "code"
         cheap = sorted((number for number in cand if by[number]["seconds"] <= B), key=tcost)

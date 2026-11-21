@@ -36,10 +36,15 @@ def plan_p10(data_dir: Path, scheduler: str, worker_count: int) -> list[CommitPl
     by_number = {test["number"]: test for test in tests}
     durations = durations_ms(tests)
     diffs = read_patches(data_dir / "commits")
-    selected = _select_batch(diffs, tests, data_dir)
+    every = [test["number"] for test in tests]
+    try:
+        selected = _select_batch(diffs, tests, data_dir)
+    except Exception as error:  # noqa: BLE001  never lose a commit's answer line
+        print(f"p10: batch failed ({type(error).__name__}: {error}) -> every test", file=sys.stderr, flush=True)
+        selected = {}
     plans: list[CommitPlan] = []
     for commit, diff in diffs:
-        numbers, fallback, notes = selected[commit]
+        numbers, fallback, notes = selected.get(commit) or (every, True, ["p10: no answer -> every test"])
         workers = assign(numbers, by_number, durations, worker_count, scheduler)
         plans.append(
             CommitPlan(
@@ -72,12 +77,19 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
             if not parsed or _unsafe(parsed, src, diff):
                 out[commit] = (every, True, ["p10: fallback unsafe diff"])
                 continue
+            if _changes_test_code(parsed):
+                out[commit] = (every, True, ["p10: fallback test code changed"])
+                continue
             files = {}
             for item in parsed:
                 if item["new"] == "/dev/null":
                     continue
                 base = src / item["new"]
                 files[item["new"]] = eb.apply(base.read_text(encoding="utf-8"), item)
+            if any(path.endswith(".py") and not _compiles(text) for path, text in files.items()):
+                # a patched module that does not compile breaks the import of every test that reaches it
+                out[commit] = (every, True, ["p10: fallback post-patch syntax error"])
+                continue
             if _identity_noop(parsed, src, files):
                 # is/== (or is not/!=) where every stored value makes the two operators agree.
                 # Probing that commit only spends CPU; the schedule stays empty.
@@ -243,11 +255,35 @@ def _fmt(notes) -> list[str]:
     return pretty
 
 
+def _compiles(code: str) -> bool:
+    try:
+        compile(code, "<patch>", "exec")
+        return True
+    except (SyntaxError, ValueError):
+        return False
+
+
+def _changes_test_code(parsed) -> bool:
+    """Edits to sqlglot's own test modules or conftest change what the tests are; the maps describe the old ones."""
+    for item in parsed:
+        for path in (item.get("new"), item.get("old")):
+            path = path or ""
+            if (path.startswith("tests/") and path.endswith(".py")) or "conftest" in path:
+                return True
+    return False
+
+
 def _unsafe(parsed, src: Path, diff: str) -> bool:
-    if "GIT binary patch" in diff or diff.startswith("Binary files"):
+    lines = diff.splitlines()
+    if "GIT binary patch" in diff or any(line.startswith("Binary files ") for line in lines):
+        return True
+    markers = ("rename from ", "rename to ", "copy from ", "new file mode", "deleted file mode")
+    if any(line.startswith(markers) for line in lines):
         return True
     for item in parsed:
         if item["old"] == "/dev/null" or item["new"] == "/dev/null":
+            return True
+        if item["old"] != item["new"]:
             return True
         path = item["new"]
         if path.endswith(".py") and path.startswith("sqlglot/") and not (src / path).is_file():

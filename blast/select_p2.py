@@ -22,7 +22,7 @@ from blast.select_hybrid import _load, select_hybrid
 B = float(os.environ.get("BLAST_P2_B", "2.0"))
 ALPHA = float(os.environ.get("BLAST_P2_ALPHA", "1.3"))
 OVH = 0.15
-P_PASS = {"code": 0.26, "fixture": 0.05}
+P_PASS = {"code": float(os.environ.get("BLAST_P2_PPASS", "0.26")), "fixture": float(os.environ.get("BLAST_P2_PPASS_FIX", "0.05"))}
 STAGE1_S = 0.3
 _RUN: dict = {}
 

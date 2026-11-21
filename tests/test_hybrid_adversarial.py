@@ -90,6 +90,25 @@ class HybridAdversarial(unittest.TestCase):
         s, fb, notes = self.run_sel(_diff(p, n, l, l + " /* comment */"))
         self.assertGreater(len(s), 0)
 
+    def test_function_code_run_at_import_selects_everything(self):
+        # Dialect.to_json_path runs while dialect classes are created; breaking it breaks every import
+        n, l = _line("sqlglot/dialects/dialect.py", "path_text = path.name")
+        s, fb, notes = self.run_sel(_diff("sqlglot/dialects/dialect.py", n, l, l[: len(l) - len(l.lstrip())] + "pass"))
+        self.assertEqual(len(s), ALL, notes)
+
+    def test_signature_of_import_time_function_selects_everything(self):
+        n, l = _line("sqlglot/trie.py", "def new_trie(")
+        s, fb, notes = self.run_sel(_diff("sqlglot/trie.py", n, l, l.replace("= None", "= 0")))
+        self.assertEqual(len(s), ALL, notes)
+
+    def test_expression_class_metadata_reaches_sql_text_users(self):
+        n, l = _line("sqlglot/expressions/functions.py", "class Seq1(")
+        body_n = n + 1
+        body = (SRC / "sqlglot/expressions/functions.py").read_text(encoding="utf-8").splitlines()[body_n - 1]
+        s, fb, notes = self.run_sel(_diff("sqlglot/expressions/functions.py", body_n, body, body.replace("False", "True")))
+        self.assertIn(NUM["tests/dialects/test_snowflake.py::TestSnowflake::test_seq_functions"], s, notes)
+        self.assertIn(NUM["tests/test_optimizer.py::TestOptimizer::test_annotate_funcs"], s, notes)
+
     def test_typing_module_import_change_reaches_dynamic_typing_test(self):
         # Cursor QA: test_typing walks sqlglot.typing with importlib; an import-breaking edit must reach it.
         n, l = _line("sqlglot/typing/snowflake.py", "import")

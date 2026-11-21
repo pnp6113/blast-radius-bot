@@ -48,7 +48,11 @@ def _load(tests: list[dict]) -> dict:
         return _STATE
     md = _maps_dir()
     with gzip.open(md / "covmap_line.json.gz", "rt", encoding="utf-8") as fh:
-        cov_raw = json.load(fh)["line_tests"]
+        _cov_doc = json.load(fh)
+    cov_raw = _cov_doc["line_tests"]
+    # lines executed while importing (module/class bodies and functions they call, e.g. metaclass hooks):
+    # coverage saw them without a test context
+    nocontext = {f: set(v) for f, v in _cov_doc.get("lines_without_test_context", {}).items()}
     dmap_raw = json.loads((md / "dialect_usage_map.json").read_text(encoding="utf-8"))
     reads_raw = json.loads((md / "file_reads_map.json").read_text(encoding="utf-8"))
     map_ids = json.loads((md / "test_ids.json").read_text(encoding="utf-8"))["tests"]
@@ -71,7 +75,8 @@ def _load(tests: list[dict]) -> dict:
     index = Index.load(idx_path) if idx_path.is_file() else Index(src)
     _STATE.clear()
     _STATE.update(key=key, cov=cov, reads=reads, src=src, analyzer=Analyzer(index, cov, dmap),
-                  all=[t["number"] for t in tests], unknown=unknown, spans={}, trees={})
+                  all=[t["number"] for t in tests], unknown=unknown, spans={}, trees={}, nocontext=nocontext,
+                  id_num=run_num)
     return _STATE
 
 
@@ -148,6 +153,61 @@ def _import_stmt(st, path, line):
     return node, enclosing[0]
 
 
+def _snake(name: str) -> str:
+    return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
+
+
+def _test_sources(st):
+    """[(test_id_prefix_by_method, lowercase method source)] and {fixture path: lowercase text} from the pinned tree."""
+    if "test_src" in st:
+        return st["test_src"], st["fixture_src"]
+    tests_dir = st["src"] / "tests"
+    meth, fix = [], {}
+    for f in sorted(tests_dir.rglob("test_*.py")):
+        rel = f.relative_to(st["src"]).as_posix()
+        text = f.read_text(encoding="utf-8")
+        lines = text.splitlines()
+        try:
+            tree = ast.parse(text)
+        except SyntaxError:
+            continue
+        for cls in tree.body:
+            if isinstance(cls, ast.ClassDef):
+                for fn in cls.body:
+                    if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)) and fn.name.startswith("test"):
+                        body = (chr(10)).join(lines[fn.lineno - 1: fn.end_lineno]).lower()
+                        meth.append((f"{rel}::{cls.name}::{fn.name}", body))
+    fdir = tests_dir / "fixtures"
+    if fdir.is_dir():
+        for f in sorted(fdir.rglob("*")):
+            if f.is_file() and f.suffix in (".sql", ".json", ".txt", ".py"):
+                try:
+                    fix[f.relative_to(st["src"]).as_posix()] = f.read_text(encoding="utf-8").lower()
+                except (UnicodeDecodeError, OSError):
+                    continue
+    st["test_src"], st["fixture_src"] = meth, fix
+    return meth, fix
+
+
+def _text_users(st, cls: str) -> set:
+    tokens = {cls.lower(), _snake(cls)}
+    pat = re.compile(r"(?<![a-z0-9_])(" + "|".join(re.escape(t) for t in sorted(tokens)) + r")(?![a-z0-9_])")
+    meth, fix = _test_sources(st)
+    by_id = {t: n for t, n in st["id_num"].items()}
+    out = {by_id[tid] for tid, body in meth if tid in by_id and pat.search(body)}
+    for path, text in fix.items():
+        if pat.search(text):
+            out.update(st["reads"].get(path, ()))
+    return out
+
+
+def _in_function(st, path, line) -> bool:
+    for n in ast.walk(_tree(st, path)):
+        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.body and n.body[0].lineno <= line <= n.end_lineno:
+            return True
+    return False
+
+
 def _toplevel_names(tree) -> set:
     out = set()
     for n in tree.body:
@@ -215,6 +275,13 @@ def select_hybrid(diff: str, tests: list[dict]) -> tuple[list[int], bool, list[s
             if _import_sig(old_tree) != _import_sig(new_tree) or (_toplevel_names(old_tree) - _toplevel_names(new_tree)):
                 return every, True, [f"fallback: import-level change in {p}"]
             lines = _touched(fp)
+            # a function body that runs during import (no test context in coverage) can break importing the
+            # module for every test: per-test coverage cannot attribute it -> every test
+            imp = st["nocontext"].get(p, set())
+            if imp:
+                for ln in _expand_stmt(st, p, lines):
+                    if ln in imp and _import_stmt(st, p, ln)[0] is None and _in_function(st, p, ln):
+                        return every, True, [f"fallback: {p}:{ln} is function code that runs at import"]
             for ln in _expand_stmt(st, p, lines):
                 sel.update(cov.get(p, {}).get(str(ln), ()))
             # signature rule: a changed def header (decorators/defaults/args) affects every caller of the body
@@ -223,7 +290,11 @@ def select_hybrid(diff: str, tests: list[dict]) -> tuple[list[int], bool, list[s
                     hs = min([fn.lineno] + [d.lineno for d in fn.decorator_list])
                     he = fn.body[0].lineno - 1
                     if any(hs <= ln <= he for ln in lines):
-                        for ln in range(fn.body[0].lineno, fn.end_lineno + 1):
+                        body = range(fn.body[0].lineno, fn.end_lineno + 1)
+                        if any(ln in imp for ln in body):
+                            # the function runs during import: its signature change can break every import
+                            return every, True, [f"fallback: signature of {fn.name} (runs at import) in {p}"]
+                        for ln in body:
                             sel.update(cov.get(p, {}).get(str(ln), ()))
                         notes.append(f"{p}: signature {fn.name}")
             for ln in lines:
@@ -232,6 +303,12 @@ def select_hybrid(diff: str, tests: list[dict]) -> tuple[list[int], bool, list[s
                     ts, info = an.analyze(p, node, enclosing_class=cls)
                     sel.update(ts)
                     notes.append(f"{p}: import-time {info['names'][:3]} -> {len(ts)}")
+                    if cls and p.startswith("sqlglot/expressions/"):
+                        # expression classes are reached from SQL text through the function/parser registries,
+                        # not by Python name: add tests whose source or fixture files mention the class's names
+                        tx = _text_users(st, cls)
+                        sel.update(tx)
+                        notes.append(f"{p}: text users of {cls} -> {len(tx)}")
         elif p.startswith("tests/fixtures/"):
             if p in st["reads"]:
                 sel.update(st["reads"][p])

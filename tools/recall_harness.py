@@ -30,8 +30,11 @@ def work(args):
     t_sel = time.monotonic() - t0
     src = Path(os.environ.get("BLAST_SQLGLOT_SRC", "/opt/sqlglot"))
     files = {}
-    for fp in patchparse.parse(patch):
-        files[fp.path] = patchparse.apply((src / fp.old_path).read_text(encoding="utf-8"), fp)
+    try:
+        for fp in patchparse.parse(patch):
+            files[fp.path] = patchparse.apply((src / fp.old_path).read_text(encoding="utf-8"), fp)
+    except Exception as e:  # noqa: BLE001  malformed synthetic mutant: skip
+        return {"mutant": Path(pf).name, "sel": len(sel), "fallback": fb, "fail": [], "missed": [], "skipped": str(e)}
     allt = [(t["id"], t["seconds"]) for t in TESTS if t["id"] not in HEAVY_IDS]
     res = probe.probe(str(src), files, allt, deadline=time.monotonic() + 900, factor=6.0, slack=20.0)
     num = {t["id"]: t["number"] for t in TESTS}

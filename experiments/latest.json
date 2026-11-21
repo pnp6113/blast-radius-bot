@@ -1,0 +1,95 @@
+{
+  "note": "Sample-set results only. The final batch is unseen and about 1.5x larger. local_cpu_seconds is this process, not the contest container.",
+  "rows": [
+    {
+      "strategy": "all",
+      "scheduler": "starter",
+      "workers": 3,
+      "ok": true,
+      "simulated_milliseconds": 1210470,
+      "simulated_seconds": "1210.470",
+      "misses": 0,
+      "missed_commits": [],
+      "local_cpu_seconds": 0.078125,
+      "fallbacks": 0
+    },
+    {
+      "strategy": "all",
+      "scheduler": "lpt_ms",
+      "workers": 4,
+      "ok": true,
+      "simulated_milliseconds": 1104510,
+      "simulated_seconds": "1104.510",
+      "misses": 0,
+      "missed_commits": [],
+      "local_cpu_seconds": 0.046875,
+      "fallbacks": 0
+    },
+    {
+      "strategy": "all",
+      "scheduler": "lpt_ms",
+      "workers": 8,
+      "ok": true,
+      "simulated_milliseconds": 1344510,
+      "simulated_seconds": "1344.510",
+      "misses": 0,
+      "missed_commits": [],
+      "local_cpu_seconds": 0.0625,
+      "fallbacks": 0
+    },
+    {
+      "strategy": "module",
+      "scheduler": "lpt_ms",
+      "workers": 4,
+      "ok": true,
+      "simulated_milliseconds": 1775130,
+      "simulated_seconds": "1775.130",
+      "misses": 5,
+      "missed_commits": [
+        "2jrq",
+        "3utz",
+        "535z",
+        "ary6",
+        "j6uz"
+      ],
+      "local_cpu_seconds": 0.453125,
+      "fallbacks": 3
+    },
+    {
+      "strategy": "imports",
+      "scheduler": "lpt_ms",
+      "workers": 4,
+      "ok": true,
+      "simulated_milliseconds": 532808,
+      "simulated_seconds": "532.808",
+      "misses": 0,
+      "missed_commits": [],
+      "local_cpu_seconds": 0.0625,
+      "fallbacks": 0
+    },
+    {
+      "strategy": "imports",
+      "scheduler": "auto",
+      "workers": 4,
+      "ok": true,
+      "simulated_milliseconds": 482337,
+      "simulated_seconds": "482.337",
+      "misses": 0,
+      "missed_commits": [],
+      "local_cpu_seconds": 0.140625,
+      "fallbacks": 0
+    },
+    {
+      "strategy": "all",
+      "scheduler": "auto",
+      "workers": 4,
+      "ok": true,
+      "simulated_milliseconds": 1104510,
+      "simulated_seconds": "1104.510",
+      "misses": 0,
+      "missed_commits": [],
+      "local_cpu_seconds": 0.46875,
+      "fallbacks": 0
+    }
+  ]
+}

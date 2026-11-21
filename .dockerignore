@@ -1,0 +1,11 @@
+.git
+.cache
+sample
+experiments
+docs
+tests
+tools
+**/__pycache__
+**/*.pyc
+output.jsonl
+starter/README.md

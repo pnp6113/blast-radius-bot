@@ -14,6 +14,7 @@ from blast.patch import comment_only_heuristic, read_patches
 from blast.schedule import assign
 from blast.select_imports import select_imports
 from blast.select_module import select_module
+from blast.select_hybrid import select_hybrid
 
 
 @dataclass
@@ -68,6 +69,8 @@ def _select(strategy: str, diff: str, tests: list[dict]) -> tuple[list[int], boo
         return select_module(diff, tests)
     if strategy == "imports":
         return select_imports(diff, tests)
+    if strategy == "hybrid":
+        return select_hybrid(diff, tests)
     raise ValueError(f"unknown strategy {strategy}")
 
 

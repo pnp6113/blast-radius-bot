@@ -601,9 +601,9 @@ def _consts_numeric_change(old_consts, new_consts) -> bool:
             continue
         changed = True
         if isinstance(before, bool) or isinstance(after, bool):
-            # Bools are flags read at import (e.g. arg_types -> required_args); flipping one can break
-            # every module that builds that expression at import time. Let the import probe decide.
-            return False
+            if type(before) is not bool or type(after) is not bool:
+                return False
+            continue
         if not isinstance(before, (int, float, type(None))) or not isinstance(after, (int, float, type(None))):
             return False
     return changed

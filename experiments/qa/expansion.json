@@ -1,0 +1,635 @@
+{
+  "warning": "extra_tests are selected tests that did not fail on this sample commit. Dropping them would lower the sample score and can miss a final-batch failure.",
+  "slowest_never_failed_while_selected": [
+    {
+      "number": 1490,
+      "id": "tests/test_parser.py::TestParser::test_max_nodes",
+      "file": "tests/test_parser.py",
+      "ms": 28817,
+      "commits_selected": 8,
+      "commits_on_critical_worker": 8,
+      "commits_failed": 0
+    },
+    {
+      "number": 1224,
+      "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+      "file": "tests/test_generator.py",
+      "ms": 6686,
+      "commits_selected": 21,
+      "commits_on_critical_worker": 13,
+      "commits_failed": 0
+    },
+    {
+      "number": 1123,
+      "id": "tests/test_executor.py::TestExecutor::test_optimized_tpch",
+      "file": "tests/test_executor.py",
+      "ms": 3537,
+      "commits_selected": 9,
+      "commits_on_critical_worker": 0,
+      "commits_failed": 0
+    },
+    {
+      "number": 1428,
+      "id": "tests/test_optimizer.py::TestOptimizer::test_scope",
+      "file": "tests/test_optimizer.py",
+      "ms": 2533,
+      "commits_selected": 10,
+      "commits_on_critical_worker": 0,
+      "commits_failed": 0
+    },
+    {
+      "number": 1082,
+      "id": "tests/test_executor.py::TestExecutor::test_agg_order",
+      "file": "tests/test_executor.py",
+      "ms": 1364,
+      "commits_selected": 9,
+      "commits_on_critical_worker": 0,
+      "commits_failed": 0
+    },
+    {
+      "number": 1361,
+      "id": "tests/test_optimizer.py::TestOptimizer::test_optimize_in_nulls",
+      "file": "tests/test_optimizer.py",
+      "ms": 1331,
+      "commits_selected": 8,
+      "commits_on_critical_worker": 0,
+      "commits_failed": 0
+    },
+    {
+      "number": 1541,
+      "id": "tests/test_schema.py::TestSchema::test_cache_does_not_retain_queries",
+      "file": "tests/test_schema.py",
+      "ms": 1298,
+      "commits_selected": 8,
+      "commits_on_critical_worker": 0,
+      "commits_failed": 0
+    },
+    {
+      "number": 1415,
+      "id": "tests/test_optimizer.py::TestOptimizer::test_qualify_struct_star_long_cte_chain",
+      "file": "tests/test_optimizer.py",
+      "ms": 905,
+      "commits_selected": 8,
+      "commits_on_critical_worker": 0,
+      "commits_failed": 0
+    },
+    {
+      "number": 1358,
+      "id": "tests/test_optimizer.py::TestOptimizer::test_optimize_correlated_all",
+      "file": "tests/test_optimizer.py",
+      "ms": 686,
+      "commits_selected": 8,
+      "commits_on_critical_worker": 0,
+      "commits_failed": 0
+    },
+    {
+      "number": 773,
+      "id": "tests/dialects/test_snowflake.py::TestSnowflake::test_snowflake",
+      "file": "tests/dialects/test_snowflake.py",
+      "ms": 662,
+      "commits_selected": 18,
+      "commits_on_critical_worker": 1,
+      "commits_failed": 0
+    },
+    {
+      "number": 648,
+      "id": "tests/dialects/test_redshift.py::TestRedshift::test_values",
+      "file": "tests/dialects/test_redshift.py",
+      "ms": 492,
+      "commits_selected": 8,
+      "commits_on_critical_worker": 0,
+      "commits_failed": 0
+    },
+    {
+      "number": 1321,
+      "id": "tests/test_optimizer.py::TestOptimizer::test_deep_ast_type_annotation",
+      "file": "tests/test_optimizer.py",
+      "ms": 486,
+      "commits_selected": 8,
+      "commits_on_critical_worker": 0,
+      "commits_failed": 0
+    },
+    {
+      "number": 1291,
+      "id": "tests/test_optimize_cross_joins.py::TestOptimizeCrossJoins::test_conditional_cross_joins",
+      "file": "tests/test_optimize_cross_joins.py",
+      "ms": 407,
+      "commits_selected": 9,
+      "commits_on_critical_worker": 0,
+      "commits_failed": 0
+    },
+    {
+      "number": 1405,
+      "id": "tests/test_optimizer.py::TestOptimizer::test_qualify_semi_anti_join_alias_shadowing_column",
+      "file": "tests/test_optimizer.py",
+      "ms": 369,
+      "commits_selected": 8,
+      "commits_on_critical_worker": 0,
+      "commits_failed": 0
+    },
+    {
+      "number": 214,
+      "id": "tests/dialects/test_dialect.py::TestDialect::test_lazy_load",
+      "file": "tests/dialects/test_dialect.py",
+      "ms": 368,
+      "commits_selected": 8,
+      "commits_on_critical_worker": 0,
+      "commits_failed": 0
+    }
+  ],
+  "most_often_on_critical_worker": [
+    {
+      "number": 1224,
+      "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+      "file": "tests/test_generator.py",
+      "ms": 6686,
+      "commits_selected": 21,
+      "commits_on_critical_worker": 13,
+      "commits_failed": 0
+    },
+    {
+      "number": 1490,
+      "id": "tests/test_parser.py::TestParser::test_max_nodes",
+      "file": "tests/test_parser.py",
+      "ms": 28817,
+      "commits_selected": 8,
+      "commits_on_critical_worker": 8,
+      "commits_failed": 0
+    },
+    {
+      "number": 184,
+      "id": "tests/dialects/test_dialect.py::TestDialect::test_enum",
+      "file": "tests/dialects/test_dialect.py",
+      "ms": 26,
+      "commits_selected": 21,
+      "commits_on_critical_worker": 7,
+      "commits_failed": 0
+    },
+    {
+      "number": 1568,
+      "id": "tests/test_time.py::TestTime::test_canonical_time_format_vocabulary",
+      "file": "tests/test_time.py",
+      "ms": 4,
+      "commits_selected": 21,
+      "commits_on_critical_worker": 7,
+      "commits_failed": 0
+    },
+    {
+      "number": 167,
+      "id": "tests/dialects/test_dialect.py::TestDialect::test_between",
+      "file": "tests/dialects/test_dialect.py",
+      "ms": 12,
+      "commits_selected": 14,
+      "commits_on_critical_worker": 6,
+      "commits_failed": 0
+    },
+    {
+      "number": 226,
+      "id": "tests/dialects/test_dialect.py::TestDialect::test_nvl2",
+      "file": "tests/dialects/test_dialect.py",
+      "ms": 12,
+      "commits_selected": 19,
+      "commits_on_critical_worker": 5,
+      "commits_failed": 0
+    },
+    {
+      "number": 253,
+      "id": "tests/dialects/test_dialect.py::TestDialect::test_soundex",
+      "file": "tests/dialects/test_dialect.py",
+      "ms": 7,
+      "commits_selected": 17,
+      "commits_on_critical_worker": 5,
+      "commits_failed": 0
+    },
+    {
+      "number": 228,
+      "id": "tests/dialects/test_dialect.py::TestDialect::test_operators",
+      "file": "tests/dialects/test_dialect.py",
+      "ms": 76,
+      "commits_selected": 18,
+      "commits_on_critical_worker": 4,
+      "commits_failed": 0
+    },
+    {
+      "number": 168,
+      "id": "tests/dialects/test_dialect.py::TestDialect::test_cast",
+      "file": "tests/dialects/test_dialect.py",
+      "ms": 38,
+      "commits_selected": 18,
+      "commits_on_critical_worker": 4,
+      "commits_failed": 0
+    },
+    {
+      "number": 231,
+      "id": "tests/dialects/test_dialect.py::TestDialect::test_partition_by_excluding",
+      "file": "tests/dialects/test_dialect.py",
+      "ms": 26,
+      "commits_selected": 21,
+      "commits_on_critical_worker": 4,
+      "commits_failed": 0
+    },
+    {
+      "number": 676,
+      "id": "tests/dialects/test_singlestore.py::TestSingleStore::test_types",
+      "file": "tests/dialects/test_singlestore.py",
+      "ms": 24,
+      "commits_selected": 16,
+      "commits_on_critical_worker": 4,
+      "commits_failed": 0
+    },
+    {
+      "number": 821,
+      "id": "tests/dialects/test_spark.py::TestSpark::test_strip_modifiers",
+      "file": "tests/dialects/test_spark.py",
+      "ms": 10,
+      "commits_selected": 21,
+      "commits_on_critical_worker": 4,
+      "commits_failed": 0
+    },
+    {
+      "number": 259,
+      "id": "tests/dialects/test_dialect.py::TestDialect::test_time",
+      "file": "tests/dialects/test_dialect.py",
+      "ms": 155,
+      "commits_selected": 20,
+      "commits_on_critical_worker": 3,
+      "commits_failed": 0
+    },
+    {
+      "number": 1486,
+      "id": "tests/test_parser.py::TestParser::test_is_precedence",
+      "file": "tests/test_parser.py",
+      "ms": 144,
+      "commits_selected": 18,
+      "commits_on_critical_worker": 3,
+      "commits_failed": 0
+    },
+    {
+      "number": 424,
+      "id": "tests/dialects/test_hive.py::TestHive::test_hive",
+      "file": "tests/dialects/test_hive.py",
+      "ms": 74,
+      "commits_selected": 15,
+      "commits_on_critical_worker": 3,
+      "commits_failed": 0
+    }
+  ],
+  "widest_commits": [
+    {
+      "commit": "2haz",
+      "kind": "code",
+      "selected": 1617,
+      "failing": 0,
+      "makespan_ms": 28817,
+      "files": [
+        {
+          "path": "sqlglot/dialects/dialect.py",
+          "mapped": 1617,
+          "mapped_ms": 102932,
+          "observed_failing_in_map": 0,
+          "extra_tests": 1617,
+          "extra_ms": 102932,
+          "slowest_extra_on_critical_worker": [
+            {
+              "number": 1490,
+              "id": "tests/test_parser.py::TestParser::test_max_nodes",
+              "file": "tests/test_parser.py",
+              "ms": 28817,
+              "failed_here": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "5y72",
+      "kind": "code",
+      "selected": 1617,
+      "failing": 0,
+      "makespan_ms": 28817,
+      "files": [
+        {
+          "path": "sqlglot/optimizer/eliminate_subqueries.py",
+          "mapped": 1617,
+          "mapped_ms": 102932,
+          "observed_failing_in_map": 0,
+          "extra_tests": 1617,
+          "extra_ms": 102932,
+          "slowest_extra_on_critical_worker": [
+            {
+              "number": 1490,
+              "id": "tests/test_parser.py::TestParser::test_max_nodes",
+              "file": "tests/test_parser.py",
+              "ms": 28817,
+              "failed_here": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "bap8",
+      "kind": "comment",
+      "selected": 1617,
+      "failing": 0,
+      "makespan_ms": 28817,
+      "files": [
+        {
+          "path": "sqlglot/transforms.py",
+          "mapped": 1617,
+          "mapped_ms": 102932,
+          "observed_failing_in_map": 0,
+          "extra_tests": 1617,
+          "extra_ms": 102932,
+          "slowest_extra_on_critical_worker": [
+            {
+              "number": 1490,
+              "id": "tests/test_parser.py::TestParser::test_max_nodes",
+              "file": "tests/test_parser.py",
+              "ms": 28817,
+              "failed_here": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "ktz3",
+      "kind": "code",
+      "selected": 1617,
+      "failing": 0,
+      "makespan_ms": 28817,
+      "files": [
+        {
+          "path": "sqlglot/expressions/ddl.py",
+          "mapped": 1617,
+          "mapped_ms": 102932,
+          "observed_failing_in_map": 0,
+          "extra_tests": 1617,
+          "extra_ms": 102932,
+          "slowest_extra_on_critical_worker": [
+            {
+              "number": 1490,
+              "id": "tests/test_parser.py::TestParser::test_max_nodes",
+              "file": "tests/test_parser.py",
+              "ms": 28817,
+              "failed_here": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "535z",
+      "kind": "code",
+      "selected": 1617,
+      "failing": 1,
+      "makespan_ms": 28817,
+      "files": [
+        {
+          "path": "sqlglot/dialects/tsql.py",
+          "mapped": 1617,
+          "mapped_ms": 102932,
+          "observed_failing_in_map": 1,
+          "extra_tests": 1616,
+          "extra_ms": 102336,
+          "slowest_extra_on_critical_worker": [
+            {
+              "number": 1490,
+              "id": "tests/test_parser.py::TestParser::test_max_nodes",
+              "file": "tests/test_parser.py",
+              "ms": 28817,
+              "failed_here": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "rszg",
+      "kind": "multi",
+      "selected": 1619,
+      "failing": 3,
+      "makespan_ms": 28817,
+      "files": [
+        {
+          "path": "sqlglot/optimizer/scope.py",
+          "mapped": 1617,
+          "mapped_ms": 102932,
+          "observed_failing_in_map": 3,
+          "extra_tests": 1614,
+          "extra_ms": 99168,
+          "slowest_extra_on_critical_worker": [
+            {
+              "number": 1490,
+              "id": "tests/test_parser.py::TestParser::test_max_nodes",
+              "file": "tests/test_parser.py",
+              "ms": 28817,
+              "failed_here": false
+            }
+          ]
+        },
+        {
+          "path": "sqlglot/typing/snowflake.py",
+          "mapped": 360,
+          "mapped_ms": 17773,
+          "observed_failing_in_map": 3,
+          "extra_tests": 357,
+          "extra_ms": 14009,
+          "slowest_extra_on_critical_worker": []
+        },
+        {
+          "path": "tests/fixtures/optimizer/qualify_columns_ddl.sql",
+          "mapped": 1,
+          "mapped_ms": 1406,
+          "observed_failing_in_map": 1,
+          "extra_tests": 0,
+          "extra_ms": 0,
+          "slowest_extra_on_critical_worker": []
+        }
+      ]
+    },
+    {
+      "commit": "2jrq",
+      "kind": "code",
+      "selected": 1617,
+      "failing": 8,
+      "makespan_ms": 28817,
+      "files": [
+        {
+          "path": "sqlglot/optimizer/eliminate_joins.py",
+          "mapped": 1617,
+          "mapped_ms": 102932,
+          "observed_failing_in_map": 8,
+          "extra_tests": 1609,
+          "extra_ms": 78151,
+          "slowest_extra_on_critical_worker": [
+            {
+              "number": 1490,
+              "id": "tests/test_parser.py::TestParser::test_max_nodes",
+              "file": "tests/test_parser.py",
+              "ms": 28817,
+              "failed_here": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "3utz",
+      "kind": "code",
+      "selected": 1617,
+      "failing": 37,
+      "makespan_ms": 28817,
+      "files": [
+        {
+          "path": "sqlglot/serde.py",
+          "mapped": 1617,
+          "mapped_ms": 102932,
+          "observed_failing_in_map": 37,
+          "extra_tests": 1580,
+          "extra_ms": 67962,
+          "slowest_extra_on_critical_worker": [
+            {
+              "number": 1490,
+              "id": "tests/test_parser.py::TestParser::test_max_nodes",
+              "file": "tests/test_parser.py",
+              "ms": 28817,
+              "failed_here": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "66ks",
+      "kind": "code",
+      "selected": 60,
+      "failing": 0,
+      "makespan_ms": 21454,
+      "files": [
+        {
+          "path": "sqlglot/executor/context.py",
+          "mapped": 60,
+          "mapped_ms": 31565,
+          "observed_failing_in_map": 0,
+          "extra_tests": 60,
+          "extra_ms": 31565,
+          "slowest_extra_on_critical_worker": [
+            {
+              "number": 1106,
+              "id": "tests/test_executor.py::TestExecutor::test_execute_tpcds",
+              "file": "tests/test_executor.py",
+              "ms": 21454,
+              "failed_here": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "4d63",
+      "kind": "code",
+      "selected": 360,
+      "failing": 0,
+      "makespan_ms": 6686,
+      "files": [
+        {
+          "path": "sqlglot/dialects/snowflake.py",
+          "mapped": 360,
+          "mapped_ms": 17773,
+          "observed_failing_in_map": 0,
+          "extra_tests": 360,
+          "extra_ms": 17773,
+          "slowest_extra_on_critical_worker": [
+            {
+              "number": 1224,
+              "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+              "file": "tests/test_generator.py",
+              "ms": 6686,
+              "failed_here": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "commit": "986c",
+      "kind": "multi",
+      "selected": 391,
+      "failing": 1,
+      "makespan_ms": 6686,
+      "files": [
+        {
+          "path": "sqlglot/dialects/singlestore.py",
+          "mapped": 41,
+          "mapped_ms": 8086,
+          "observed_failing_in_map": 0,
+          "extra_tests": 41,
+          "extra_ms": 8086,
+          "slowest_extra_on_critical_worker": [
+            {
+              "number": 1224,
+              "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+              "file": "tests/test_generator.py",
+              "ms": 6686,
+              "failed_here": false
+            }
+          ]
+        },
+        {
+          "path": "sqlglot/typing/snowflake.py",
+          "mapped": 360,
+          "mapped_ms": 17773,
+          "observed_failing_in_map": 0,
+          "extra_tests": 360,
+          "extra_ms": 17773,
+          "slowest_extra_on_critical_worker": [
+            {
+              "number": 1224,
+              "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+              "file": "tests/test_generator.py",
+              "ms": 6686,
+              "failed_here": false
+            }
+          ]
+        },
+        {
+          "path": "tests/fixtures/optimizer/unnest_subqueries.sql",
+          "mapped": 1,
+          "mapped_ms": 329,
+          "observed_failing_in_map": 1,
+          "extra_tests": 0,
+          "extra_ms": 0,
+          "slowest_extra_on_critical_worker": []
+        }
+      ]
+    },
+    {
+      "commit": "ary6",
+      "kind": "code",
+      "selected": 294,
+      "failing": 10,
+      "makespan_ms": 6686,
+      "files": [
+        {
+          "path": "sqlglot/parsers/bigquery.py",
+          "mapped": 294,
+          "mapped_ms": 19912,
+          "observed_failing_in_map": 10,
+          "extra_tests": 284,
+          "extra_ms": 17530,
+          "slowest_extra_on_critical_worker": [
+            {
+              "number": 1224,
+              "id": "tests/test_generator.py::TestGenerator::test_generator_memory",
+              "file": "tests/test_generator.py",
+              "ms": 6686,
+              "failed_here": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

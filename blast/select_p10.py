@@ -66,18 +66,40 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
     src = eb.src
     jobs = []
     out = {}
+    walk_of: dict = {}
     for commit, diff in diffs:
         try:
             parsed = eb.parse_patch(diff)
             if not parsed or _unsafe(parsed, src, diff):
                 out[commit] = (every, True, ["p10: fallback unsafe diff"])
                 continue
+            if _changes_test_code(parsed):
+                out[commit] = (every, True, ["p10: fallback test code changed"])
+                continue
             files = {}
+            failed_apply = False
             for item in parsed:
                 if item["new"] == "/dev/null":
                     continue
                 base = src / item["new"]
-                files[item["new"]] = eb.apply(base.read_text(encoding="utf-8"), item)
+                try:
+                    if not base.is_file():
+                        out[commit] = (every, True, ["p10: fallback file missing"])
+                        failed_apply = True
+                        break
+                    patched = eb.apply(base.read_text(encoding="utf-8"), item)
+                    if item["new"].endswith(".py") and item["new"].startswith("sqlglot/"):
+                        if not _check_syntax(patched):
+                            out[commit] = (every, True, ["p10: fallback post-patch syntax error"])
+                            failed_apply = True
+                            break
+                    files[item["new"]] = patched
+                except Exception as error:
+                    out[commit] = (every, True, [f"p10: fallback apply error {type(error).__name__}"])
+                    failed_apply = True
+                    break
+            if failed_apply:
+                continue
             if _identity_noop(parsed, src, files):
                 # is/== (or is not/!=) where every stored value makes the two operators agree.
                 # Probing that commit only spends CPU; the schedule stays empty.
@@ -85,6 +107,10 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
                 out[commit] = ([], False, ["p10: identity-noop"])
                 continue
             cand, notes = eb.select(diff, "stmt+import")
+            if os.environ.get("BLAST_P10_PKGWALK", "1") == "1":
+                # scheduled directly: probing it imports the whole package in the fork (~1.2 s CPU
+                # each on the sample), while running it costs its own 0.011 s on a worker
+                walk_of[commit] = _package_walk_tests(parsed, src, tests)
             jobs.append((commit, set(cand), files, parsed, list(notes)))
         except Exception as error:
             out[commit] = (every, True, [f"p10: fallback {type(error).__name__}"])
@@ -93,7 +119,7 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
         return out
     if not hasattr(os, "fork") or not sys.platform.startswith("linux"):
         for commit, cand, _files, _parsed, notes in jobs:
-            out[commit] = (sorted(cand), False, ["p10: probing unavailable -> static", *_fmt(notes)])
+            out[commit] = (sorted(set(cand) | walk_of.get(commit, set())), False, ["p10: probing unavailable -> static", *_fmt(notes)])
         return out
 
     by = {test["number"]: test for test in eb.tests}
@@ -172,7 +198,7 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
                 pending = bigcheap
                 fixed = failed | (big - set(bigcheap))
                 if not failed:
-                    sel, how = set(), "all-pass"
+                    sel, how = _all_pass(big, cheap, parsed, src, eb, by, "all-pass(1fork)")
                 elif not pending:
                     sel, how = fixed, "live"
                 else:
@@ -218,10 +244,10 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
                     if found:
                         sel, how = decide(found | (big - set(bigcheap)), bigcheap, "stage2-live")
                     else:
-                        sel, how = set(), "all-pass"
+                        sel, how = _all_pass(big, cheap, parsed, src, eb, by, "all-pass")
                 else:
-                    sel, how = set(), "all-pass(s1)"
-        sel = sel | imp_fail
+                    sel, how = _all_pass(big, cheap, parsed, src, eb, by, "all-pass(s1)")
+        sel = sel | imp_fail | walk_of.get(commit, set())
         line = f"p10: {how}{imp_note} cand={len(cand)} sel={len(sel)}"
         print(f"{commit} {line} cpu={_used() - tick:.2f} modes={dict(fp.STATS)}", file=sys.stderr, flush=True)
         out[commit] = (sorted(sel), False, [line, *_fmt(notes)])
@@ -236,6 +262,134 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
     return out
 
 
+def _all_pass(big, probed, parsed, src, eb, by, tag):
+    """Every probed cheap test passed. Slow tests were not probed, and an unprobed test is not a
+    pass. Keep one only on direct evidence: (i) its source quotes a string or names an identifier
+    the changed lines changed (an asserted message such as "Maximum number of AST nodes"), or
+    (ii) no probed cheap test executed any changed line, so the passes say nothing about it."""
+    slow = set(big)
+    if not slow:
+        return set(), tag
+    keep = _text_witness(parsed, src, slow, by)
+    if not _probes_cover_change(parsed, src, eb, set(probed)):
+        # no probed test ran a changed line: the passes say nothing about slow tests that did
+        direct = slow & _covering(parsed, eb)
+        if direct:
+            return keep | direct, tag + f":uncovered{len(direct)}"
+    return keep, tag + (f":lit{len(keep)}" if keep else "")
+
+
+_STR = re.compile(r"""(?:[rbfuRBFU]{0,2})("[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')""")
+_IDENT = re.compile(r"\b[A-Za-z_][A-Za-z0-9_]{5,}\b")
+_COMMON = {"self", "return", "expression", "expressions", "isinstance", "string", "import", "lambda"}
+
+
+def _changed_tokens(parsed) -> set:
+    """String-literal pieces and identifiers present on one side of the diff but not the other."""
+    sides = {"-": set(), "+": set()}
+    for item in parsed:
+        for hunk in item.get("hunks", []):
+            for sign, line in hunk.get("lines", []):
+                if sign in sides:
+                    for lit in _STR.findall(line):
+                        for piece in re.split(r"\{[^}]*\}", lit[1:-1]):
+                            piece = piece.strip(" ()[]{}:;,.\t")
+                            if len(piece) >= 8:
+                                sides[sign].add(piece)
+                    code = _STR.sub(" ", line.split("#", 1)[0])
+                    sides[sign].update(w for w in _IDENT.findall(code) if w not in _COMMON)
+    return sides["-"] ^ sides["+"]
+
+
+_SRC_CACHE: dict = {}
+
+
+def _test_source(src: Path, test: dict) -> str:
+    key = test["id"]
+    if key not in _SRC_CACHE:
+        text = ""
+        try:
+            name = key.split("::")[-1].split("[")[0]
+            body = (src / test["file"]).read_text(encoding="utf-8")
+            for node in ast.walk(ast.parse(body)):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == name:
+                    text = ast.get_source_segment(body, node) or ""
+                    break
+        except Exception:
+            text = ""
+        _SRC_CACHE[key] = text
+    return _SRC_CACHE[key]
+
+
+def _text_witness(parsed, src: Path, numbers, by) -> set:
+    tokens = _changed_tokens(parsed)
+    if not tokens:
+        return set()
+    return {n for n in numbers if any(tok in _test_source(src, by[n]) for tok in tokens)}
+
+
+def _covering(parsed, eb) -> set:
+    hit = set()
+    for item in parsed:
+        path = item["new"]
+        if path.endswith(".py") and path.startswith("sqlglot/"):
+            lines = eb.cov.get(path, {})
+            for line in eb.touched_lines(item, path):
+                hit.update(lines.get(str(line), ()))
+    return hit
+
+
+def _probes_cover_change(parsed, src: Path, eb, probed: set) -> bool:
+    """True when some probed test executed a changed line of a changed sqlglot module."""
+    seen_py = False
+    for item in parsed:
+        path = item["new"]
+        if not (path.endswith(".py") and path.startswith("sqlglot/")):
+            continue
+        seen_py = True
+        lines = eb.cov.get(path, {})
+        for line in eb.touched_lines(item, path):
+            if probed.intersection(lines.get(str(line), ())):
+                return True
+    return not seen_py
+
+
+_WALK_CACHE: list = []
+
+
+def _package_walk_tests(parsed, src: Path, tests) -> set:
+    """Tests that enumerate a sqlglot package at run time (pkgutil.iter_modules/walk_packages plus
+    import_module) depend on every module in it, including ones line coverage never attributed to
+    them. Built from the pinned test sources on first use."""
+    if not _WALK_CACHE:
+        by_file: dict = {}
+        for test in tests:
+            by_file.setdefault(test["file"], []).append(test)
+        entries = []
+        for rel, group in by_file.items():
+            try:
+                body = (src / rel).read_text(encoding="utf-8")
+            except OSError:
+                continue
+            if "iter_modules" not in body and "walk_packages" not in body:
+                continue
+            for test in group:
+                text = _test_source(src, test)
+                if "iter_modules" not in text and "walk_packages" not in text:
+                    continue
+                pkgs = set(re.findall(r"sqlglot\.([a-z_]+)\.__(?:file|path)__", text))
+                pkgs |= set(re.findall(r"import_module\(f[\"']sqlglot\.([a-z_]+)\.", text))
+                entries.append((test["number"], {f"sqlglot/{pkg}/" for pkg in pkgs} or {"sqlglot/"}))
+        _WALK_CACHE.append(entries)
+    hits = set()
+    for item in parsed:
+        path = item["new"] if item["new"] != "/dev/null" else item["old"]
+        for number, prefixes in _WALK_CACHE[0]:
+            if any(path.startswith(prefix) for prefix in prefixes):
+                hits.add(number)
+    return hits
+
+
 def _fmt(notes) -> list[str]:
     pretty = []
     for note in notes[:6]:
@@ -243,10 +397,33 @@ def _fmt(notes) -> list[str]:
     return pretty
 
 
+def _check_syntax(code: str) -> bool:
+    """Check if Python code compiles without syntax errors."""
+    try:
+        compile(code, "<patch>", "exec")
+        return True
+    except SyntaxError:
+        return False
+
+
+def _changes_test_code(parsed) -> bool:
+    """Check if any test files or conftest are modified."""
+    for item in parsed:
+        path = item.get("new") or item.get("old") or ""
+        if path.startswith("tests/") and path.endswith(".py"):
+            return True
+        if "conftest" in path:
+            return True
+    return False
+
+
 def _unsafe(parsed, src: Path, diff: str) -> bool:
     if "GIT binary patch" in diff or diff.startswith("Binary files"):
         return True
     for item in parsed:
+        status = item.get("status", "M")
+        if status in ("A", "D", "R"):
+            return True
         if item["old"] == "/dev/null" or item["new"] == "/dev/null":
             return True
         path = item["new"]
@@ -269,10 +446,9 @@ def _import_affecting(parsed, src, eb, ac, it) -> bool:
             return True
         if ac.dump(new) == ac.dump(old):
             continue
-        # Only constant values changed (ints, floats, bools). That cannot make the import fail,
-        # so the import probe would spend CPU and add nothing. String constants can be module paths.
-        if _numeric_constants_only(old, new):
-            continue
+        # A constants-only edit can still fail at import: flipping "requires_json" in an
+        # expressions arg_types dict failed 1115 tests at import (held-out mutant i9_0019).
+        # Keeping the import probe here costs ~0.1 s CPU on the sample.
         if ac.sdump(old) != ac.sdump(new):
             return True
         if any(it.import_line(path, line) for line in eb.touched_lines(item)):
@@ -299,13 +475,56 @@ def _dialect_witness(parsed, cand, by, src, files) -> list:
         old_path = src / path
         if not old_path.is_file() or path not in files:
             return []
-        if not _numeric_constants_only(old_path.read_text(encoding="utf-8"), files[path]):
+        old_text = old_path.read_text(encoding="utf-8")
+        if not _numeric_constants_only(old_text, files[path]):
+            return []
+        # Only tokenizer-table edits. A dialect-level flag is read by the shared generator and
+        # optimizer, and its failures land in test_dialect/test_optimizer/other dialects' files:
+        # 8 of 20 held-out flag flips failed only outside tests/dialects/test_<stem>.py.
+        if not _inside_tokenizer(old_text, item):
             return []
         stems.append(Path(path).stem)
     if not stems:
         return []
+    # A dialect that subclasses the edited one inherits its tokenizer: its own test file
+    # is a witness too (a spark tokenizer flip failed only tests/dialects/test_databricks.py).
+    stems = _dialect_descendants(src, set(stems))
     wanted = {f"tests/dialects/test_{stem}.py" for stem in stems}
     return [number for number in cand if by[number]["file"] in wanted]
+
+
+def _dialect_descendants(src: Path, stems: set) -> set:
+    imports = {}
+    for path in (src / "sqlglot" / "dialects").glob("*.py"):
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        imports[path.stem] = set(re.findall(r"sqlglot\.dialects\.([a-z0-9_]+)", text)) | set(
+            re.findall(r"from \.([a-z0-9_]+) import", text)
+        )
+    out = set(stems)
+    grew = True
+    while grew:
+        grew = False
+        for stem, deps in imports.items():
+            if stem not in out and deps & out:
+                out.add(stem)
+                grew = True
+    return out
+
+
+def _inside_tokenizer(old_text: str, item) -> bool:
+    spans = [
+        (node.lineno, node.end_lineno)
+        for node in ast.walk(ast.parse(old_text))
+        if isinstance(node, ast.ClassDef) and node.name == "Tokenizer"
+    ]
+    lines = set()
+    for hunk in item["hunks"]:
+        lines.update(hunk["removed"])
+        lines.update(hunk["added"])
+    return bool(lines) and all(any(a <= line <= b for a, b in spans) for line in lines)
 
 
 def _numeric_constants_only(old: str, new: str) -> bool:

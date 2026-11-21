@@ -23,7 +23,6 @@ COPY blast /app/blast
 COPY maps /app/maps
 COPY research/ethan-p10 /app/research/ethan-p10
 COPY selector.py /app/selector.py
-COPY sample/tests.json /app/sample/tests.json
 
 # Build indexes and the probe preset cache once (build time is not charged).
 RUN PYTHONPATH=/app python -c "from blast.hybrid_index import Index; Index('/opt/sqlglot').save('/app/maps/hybrid/index.pkl')" \

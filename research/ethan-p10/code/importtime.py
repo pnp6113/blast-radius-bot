@@ -127,6 +127,40 @@ def class_users(idx, cname):
         for line in range(d[0], d[1] + 1): s |= idx.tests_at(f, line)
     return s
 
+_TREES = {}
+def _direct_alias(idx, f, l, nm):
+    """True when line `l` of `f` starts `target = <nm>` (the class itself is bound, not a container mentioning it)."""
+    if f not in _TREES:
+        try: _TREES[f] = [n for n in ast.walk(ast.parse((idx.src / f).read_text(encoding='utf-8'))) if isinstance(n, (ast.Assign, ast.AnnAssign))]
+        except (OSError, SyntaxError): _TREES[f] = []
+    for n in _TREES[f]:
+        if n.lineno == l and n.value is not None:
+            v = n.value
+            if (isinstance(v, ast.Name) and v.id == nm) or (isinstance(v, ast.Attribute) and v.attr == nm): return True
+    return False
+
+def alias_users(idx, cname, max_depth=4, cache={}):
+    """Tests that reach a class through names it is bound to while modules load (e.g. a metaclass storing it as
+    `klass.jsonpath_tokenizer_class`, later instantiated by `Dialect.jsonpath_tokenizer()`): follow direct import-time
+    aliases and names derived by import-executed code, then collect the covering tests of their test-time reads.
+    Containers that merely mention the class (registries, location maps) are not followed."""
+    if cname in cache: return cache[cname]
+    out, seen, frontier, depth = set(), set(), {cname}, 0
+    while frontier and depth < max_depth:
+        nxt = set()
+        for nm in frontier - seen:
+            seen.add(nm)
+            for i, (f, l, runtime, own) in enumerate(idx.reads.get(nm, [])):
+                if not runtime:
+                    if own and _direct_alias(idx, f, l, nm): nxt |= set(own)
+                else:
+                    out |= idx.tests_at(f, l)   # test-time executions (a line may also run at import)
+                    if import_line(f, l):
+                        nxt |= set(idx.rtown.get((f, l, nm, i), ())) - {'self', 'cls'}
+        frontier = nxt; depth += 1
+    cache[cname] = out
+    return out
+
 DEFUSE = os.environ.get('BR_DEFUSE', '0') == '1'
 IMPDERIV = os.environ.get('BR_IMPDERIV', '0') == '1'   # follow values derived inside functions that run at import
 INSTMAP = os.environ.get('BR_INSTMAP', '0') == '1'     # class filter also uses the runtime instantiation map
@@ -204,6 +238,7 @@ def analyze(idx, rel, stmt_node, max_depth=3, enclosing_class=None, values_only=
     # dict literal keys inside the statement are also "names" read via lookups
     tests = set(); seen = set(); frontier = set(names); depth = 0
     rt_seed = []   # (name, fallback_tests) for runtime transfers
+    baked = False  # a direct reader runs at import: the change is baked into the class, whoever uses it later
     while frontier and depth < max_depth:
         nxt = set()
         for nm in frontier - seen:
@@ -214,6 +249,7 @@ def analyze(idx, rel, stmt_node, max_depth=3, enclosing_class=None, values_only=
                         if (f, l, nm, i) in idx.keyuse: continue
                         if import_executed(f, l) and not (DEFUSE and idx.xfer.get((f, l, nm, i))):   # value consumed at import: refinement unsafe
                             return analyze(idx, rel, stmt_node, max_depth, enclosing_class, False)
+                    if import_line(f, l): baked = True   # the value is consumed while the class is built
                     if IMPDERIV and import_line(f, l) and (f, l, nm, i) in idx.rtown:
                         nxt |= set(idx.rtown[(f, l, nm, i)]) - {'self', 'cls'}   # derived at import (e.g. metaclass) -> follow
                     xf = idx.xfer.get((f, l, nm, i)) if DEFUSE else None
@@ -237,6 +273,10 @@ def analyze(idx, rel, stmt_node, max_depth=3, enclosing_class=None, values_only=
             else: cu = cu | set(im['users'].get(enclosing_class, []))
         info['class_filter'] = (enclosing_class, len(cu))
         if cu: tests &= cu
+        if baked:   # the class itself carries the change: add whoever reaches it through import-time aliases
+            au = alias_users(idx, enclosing_class)
+            info['baked_alias_users'] = len(au)
+            tests |= au
     return tests, info
 
 def values_only_change(old, new):

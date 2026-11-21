@@ -11,7 +11,7 @@ Patch application in the child, per changed file:
     re-import everything through the overlay (same as the old probe.py, minus 3rd-party imports).
 Data files (fixtures) are served through an open() redirect.
 Research prototype; no disk writes."""
-import os, sys, io, ast, gc, json, signal, builtins, importlib, importlib.abc, importlib.util, pickle, unittest, collections
+import os, re, sys, io, ast, gc, json, signal, builtins, importlib, importlib.abc, importlib.util, pickle, unittest, collections
 
 os.environ.setdefault('SKIP_INTEGRATION', '0'); os.environ.setdefault('OPENBLAS_NUM_THREADS', '1')
 SRC = None
@@ -384,6 +384,42 @@ def _assigned_name(node):
     return None
 
 
+_IMPORTED_NAMES = None
+def _imported_names():
+    """Names bound by `from X import ...` anywhere in sqlglot (a binding keeps the old object after a hot swap)."""
+    global _IMPORTED_NAMES
+    if _IMPORTED_NAMES is None:
+        names = set()
+        pat = re.compile(r'^\s*from\s+\S+\s+import\s+(\([^)]*\)|[^\n]*)', re.M)
+        for root, _dirs, fs in os.walk(os.path.join(SRC, 'sqlglot')):
+            for fn in fs:
+                if fn.endswith('.py'):
+                    try: text = open(os.path.join(root, fn), encoding='utf-8').read()
+                    except OSError: continue
+                    for m in pat.finditer(text):
+                        names.update(re.findall(r'[A-Za-z_][A-Za-z0-9_]*', m.group(1)))
+        _IMPORTED_NAMES = names
+    return _IMPORTED_NAMES
+
+
+def _read_at_import(target):
+    """True when some code reads `target` while modules load (a class or module body, a `{**Base.X}` copy, a
+    comprehension building a registry, code that runs at import) or imports it by name. Such a value has
+    already been copied or derived, so setting the attribute in place would not reach the copies."""
+    try:
+        import eval_baselines as _eb, importtime as _it
+        idx = globals().get('_HOT_IDX') or getattr(_eb, '_IDX', None) or _eb.load_index(_it)
+        globals()['_HOT_IDX'] = idx
+    except Exception:
+        return True   # cannot tell -> cold path
+    if target in _imported_names():
+        return True
+    for f, l, runtime, _own in idx.reads.get(target, []):
+        if not runtime or _it.import_line(f, l):
+            return True
+    return False
+
+
 def _plain_class(mod_name, qual):
     if not qual:
         return True
@@ -411,7 +447,8 @@ def prepare(files):
             pl = plan_swap(ap, old, text)
             if pl == 'import-time change':
                 updates = _literal_updates(old, text, rel)
-                if updates is not None and all(_plain_class(mod_name, qual) for mod_name, qual, _attr, _value in updates):
+                if updates is not None and all(_plain_class(mod_name, qual) and not _read_at_import(attr)
+                                               for mod_name, qual, attr, _value in updates):
                     consts.extend(updates)
                     continue
                 reasons.append(pl); continue

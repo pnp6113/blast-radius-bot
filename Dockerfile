@@ -23,6 +23,7 @@ COPY blast /app/blast
 COPY maps /app/maps
 COPY research/ethan-p10 /app/research/ethan-p10
 COPY selector.py /app/selector.py
+COPY sample/tests.json /app/sample/tests.json
 
 # Build indexes and the probe preset cache once (build time is not charged).
 RUN PYTHONPATH=/app python -c "from blast.hybrid_index import Index; Index('/opt/sqlglot').save('/app/maps/hybrid/index.pkl')" \
@@ -42,6 +43,11 @@ ENV PYTHONUNBUFFERED=1 \
     BR_ARTIFACTS=/opt/p10maps \
     BR_IDXCACHE=/opt/p10maps/idx_cache.pkl \
     PRESET_CACHE=/opt/p10maps/preset_cache.pkl \
+    BR_ASTIDX=/opt/p10maps/astindex.pkl \
+    BR_KEYIDX=/opt/p10maps/keyidx \
+    BR_IDFACTS=/opt/p10maps/idfacts.pkl \
+    BLAST_PARENT_GC=0 \
+    BR_CHILD_GC=0 \
     SKIP_INTEGRATION=0 \
     OPENBLAS_NUM_THREADS=1 \
     OMP_NUM_THREADS=1 \

@@ -435,7 +435,8 @@ def prepare(files):
     return ('hot', hot, bad, consts)
 
 def child(files, test_ids, plan, per_test_timeout, wfd, stop_on_fail):
-    gc.enable()
+    if os.environ.get('BR_CHILD_GC', '1') == '1': gc.enable()
+    else: gc.disable()
     py = {}; data = {}
     for rel, text in files.items():
         ap = os.path.join(SRC, rel)

@@ -24,6 +24,12 @@ for root, _, fs in os.walk(os.path.join(src, 'sqlglot')):
             fns = [(n.lineno, n.end_lineno) for n in ast.walk(st) if isinstance(n, (ast.Lambda, ast.FunctionDef, ast.AsyncFunctionDef))]
             lams.append((L.lineno, L.end_lineno, L.end_col_offset, ok, (st.lineno, st.end_lineno), fns))
         h = lambda s: hashlib.sha1(s.encode()).hexdigest()
-        idx[key] = {'dump': h(AC.dump(text)), 'sdump': h(AC.sdump(text)), 'lams': lams}
+        class _B(ast.NodeTransformer):
+            def visit_Constant(self, node):
+                node.value = None
+                return node
+        consts = [n.value for n in ast.walk(ast.parse(text)) if isinstance(n, ast.Constant)]
+        idx[key] = {'dump': h(AC.dump(text)), 'sdump': h(AC.sdump(text)), 'lams': lams,
+                    'cdump': h(ast.dump(_B().visit(ast.parse(text)))), 'consts': consts}
 pickle.dump(idx, open(out, 'wb'), protocol=5)
 print('files', len(idx))

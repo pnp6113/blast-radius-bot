@@ -55,6 +55,8 @@ def plan_p10(data_dir: Path, scheduler: str, worker_count: int) -> list[CommitPl
 
 
 def _select_batch(diffs, tests, data_dir: Path) -> dict:
+    if os.environ.get('BLAST_PARENT_GC', '1') == '0':
+        import gc; gc.disable()
     every = [test["number"] for test in tests]
     try:
         eb, fp, it, ac = _load_research(tests, data_dir)
@@ -111,6 +113,7 @@ def _select_batch(diffs, tests, data_dir: Path) -> dict:
                 # scheduled directly: probing it imports the whole package in the fork (~1.2 s CPU
                 # each on the sample), while running it costs its own 0.011 s on a worker
                 walk_of[commit] = _package_walk_tests(parsed, src, tests)
+            cand = _dict_narrow(parsed, files, src, cand, notes)
             jobs.append((commit, set(cand), files, parsed, list(notes)))
         except Exception as error:
             out[commit] = (every, True, [f"p10: fallback {type(error).__name__}"])
@@ -390,6 +393,32 @@ def _package_walk_tests(parsed, src: Path, tests) -> set:
     return hits
 
 
+def _dict_narrow(parsed, files, src, cand, notes):
+    """Key-level narrowing for edits confined to entries of class-level dict literals (build-time key read map,
+    research/ethan-p10/code/dictnarrow.py). Out-of-scope dict edits get every test that read the dict at test time
+    added as a safety net. Disabled when the map is missing or BLAST_DICTN=0."""
+    if os.environ.get("BLAST_DICTN", "1") != "1":
+        return cand
+    idx = os.environ.get("BR_KEYIDX", "")
+    if not idx or not os.path.isfile(os.path.join(idx, "_meta.pkl")):
+        return cand
+    py = [item for item in parsed if item["new"] == item["old"] and item["new"].startswith("sqlglot/")
+          and item["new"].endswith(".py") and item["new"] in files]
+    if not py:
+        return cand
+    import dictnarrow
+    triples = [(item["new"], (src / item["old"]).read_text(encoding="utf-8"), files[item["new"]]) for item in py]
+    if len(py) == len(parsed) and all(
+        ":" in line for line in "\n".join("\n".join(k + l for h in item["hunks"] for k, l in h["lines"] if k in "+-")
+                                          for item in py).split("\n") if line[1:].strip()):
+        narrowed, note = dictnarrow.narrow(triples)
+        if narrowed is not None:
+            notes.append(note)
+            return set(narrowed)
+    extra = dictnarrow.readers(triples)
+    return set(cand) | extra
+
+
 def _fmt(notes) -> list[str]:
     pretty = []
     for note in notes[:6]:
@@ -444,12 +473,12 @@ def _import_affecting(parsed, src, eb, ac, it) -> bool:
             ac.parse(new)
         except SyntaxError:
             return True
-        if ac.dump(new) == ac.dump(old):
+        if ac.same_dump(old, new):
             continue
         # A constants-only edit can still fail at import: flipping "requires_json" in an
         # expressions arg_types dict failed 1115 tests at import (held-out mutant i9_0019).
         # Keeping the import probe here costs ~0.1 s CPU on the sample.
-        if ac.sdump(old) != ac.sdump(new):
+        if not ac.same_sdump(old, new):
             return True
         if any(it.import_line(path, line) for line in eb.touched_lines(item)):
             return True
@@ -525,31 +554,59 @@ def _inside_tokenizer(old_text: str, item) -> bool:
         lines.update(hunk["removed"])
         lines.update(hunk["added"])
     return bool(lines) and all(any(a <= line <= b for a, b in spans) for line in lines)
+_NCO: dict = {}
 
 
 def _numeric_constants_only(old: str, new: str) -> bool:
+    key = (hash(old), hash(new), len(old), len(new))
+    if key not in _NCO:
+        _NCO[key] = _numeric_constants_only_raw(old, new)
+    return _NCO[key]
+
+
+def _numeric_constants_only_raw(old: str, new: str) -> bool:
+    import hashlib
+    import astcache as ac
     try:
-        old_tree, new_tree = ast.parse(old), ast.parse(new)
+        new_tree = ast.parse(new)
+    except SyntaxError:
+        return False
+    info = ac.info(old)
+    if info is not None and "cdump" in info:
+        # build-time facts for the pinned file: constants list + structure-with-constants-blanked hash
+        old_consts = info["consts"]
+        new_consts = [node.value for node in ast.walk(new_tree) if isinstance(node, ast.Constant)]
+        if len(old_consts) != len(new_consts):
+            return False
+        if not _consts_numeric_change(old_consts, new_consts):
+            return False
+        return hashlib.sha1(ast.dump(_BlankConsts().visit(new_tree)).encode()).hexdigest() == info["cdump"]
+    try:
+        old_tree = ast.parse(old)
     except SyntaxError:
         return False
     old_consts = [node.value for node in ast.walk(old_tree) if isinstance(node, ast.Constant)]
     new_consts = [node.value for node in ast.walk(new_tree) if isinstance(node, ast.Constant)]
     if len(old_consts) != len(new_consts):
         return False
+    if not _consts_numeric_change(old_consts, new_consts):
+        return False
+    return ast.dump(_BlankConsts().visit(old_tree)) == ast.dump(_BlankConsts().visit(new_tree))
+
+
+def _consts_numeric_change(old_consts, new_consts) -> bool:
     changed = False
     for before, after in zip(old_consts, new_consts):
         if before == after and type(before) is type(after):
             continue
         changed = True
         if isinstance(before, bool) or isinstance(after, bool):
-            if type(before) is not bool or type(after) is not bool:
-                return False
-            continue
+            # Bools are flags read at import (e.g. arg_types -> required_args); flipping one can break
+            # every module that builds that expression at import time. Let the import probe decide.
+            return False
         if not isinstance(before, (int, float, type(None))) or not isinstance(after, (int, float, type(None))):
             return False
-    if not changed:
-        return False
-    return ast.dump(_BlankConsts().visit(old_tree)) == ast.dump(_BlankConsts().visit(new_tree))
+    return changed
 
 
 _CMP_PAIRS = {
@@ -576,11 +633,27 @@ def _identity_noop(parsed, src: Path, files: dict) -> bool:
             if not path.endswith(".py") or not path.startswith("sqlglot/") or path not in files:
                 return False
             old = (src / path).read_text(encoding="utf-8")
+            # Cheap necessary condition: the texts must match once is/== and is not/!= are unified.
+            # A miss here only means the probe runs, as before.
+            if old == files[path] or _cmp_norm(old) != _cmp_norm(files[path]):
+                return False
             if not _file_identity_noop(old, files[path], src, path):
                 return False
         return True
     except Exception:
         return False
+
+
+_CMP_RE = None
+
+
+def _cmp_norm(text: str) -> str:
+    global _CMP_RE
+    if _CMP_RE is None:
+        import re
+
+        _CMP_RE = (re.compile(r"\s+is\s+not\s+|\s*!=\s*"), re.compile(r"\s+is\s+|\s*==\s*"))
+    return _CMP_RE[1].sub(" == ", _CMP_RE[0].sub(" != ", text))
 
 
 def _file_identity_noop(old: str, new: str, src: Path, rel: str) -> bool:
@@ -703,16 +776,29 @@ class _Repo:
             if name not in wanted or path in seen_paths:
                 continue
             seen_paths.add(path)
-            try:
-                tree = ast.parse(path.read_text(encoding="utf-8"))
-            except SyntaxError:
-                continue
-            local = _bindings(tree, module)
-            for node in tree.body:
-                if isinstance(node, ast.ClassDef):
-                    pending.append((node, local, module))
-        for node, local, module in pending:
-            self.classes[f"{module}.{node.name}"] = self._class(node, local)
+            facts = self._file_facts(path, module, (SyntaxError,))
+            if facts is not None:
+                pending.extend(facts)
+        for qname, info in pending:
+            self.classes[qname] = info
+
+    def _file_facts(self, path: Path, module: str, errors):
+        """[(qname, class facts)] for one pinned file. Prebuilt at image build (BR_IDFACTS) keyed by text hash."""
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError:
+            if OSError in errors:
+                return None
+            raise
+        cached = _id_facts().get(str(path.relative_to(self.src)))
+        if cached is not None and cached[0] == _sha1(text):
+            return cached[1]
+        try:
+            tree = ast.parse(text)
+        except SyntaxError:
+            return None
+        local = _bindings(tree, module)
+        return [(f"{module}.{node.name}", self._class(node, local)) for node in tree.body if isinstance(node, ast.ClassDef)]
 
     def _class(self, node: ast.ClassDef, local: dict) -> dict:
         bases = []
@@ -800,14 +886,9 @@ class _Repo:
             return
         self._parsed.add(path)
         module = path.relative_to(self.src).with_suffix("").as_posix().replace("/", ".")
-        try:
-            tree = ast.parse(path.read_text(encoding="utf-8"))
-        except (OSError, SyntaxError):
-            return
-        local = _bindings(tree, module)
-        for node in tree.body:
-            if isinstance(node, ast.ClassDef):
-                self.classes[f"{module}.{node.name}"] = self._class(node, local)
+        facts = self._file_facts(path, module, (OSError, SyntaxError))
+        for qname, info in facts or ():
+            self.classes[qname] = info
 
     def _is_enum(self, qname: str, seen=None) -> bool:
         if qname in ("enum.Enum", "enum.IntEnum", "enum.StrEnum", "enum.Flag"):
@@ -1059,6 +1140,52 @@ def _expr_types(expr, env: dict, self_types: dict):
     return None
 
 
+_ID_FACTS = None
+
+
+def _sha1(text: str) -> str:
+    import hashlib
+
+    return hashlib.sha1(text.encode("utf-8")).hexdigest()
+
+
+def _id_facts() -> dict:
+    global _ID_FACTS
+    if _ID_FACTS is None:
+        _ID_FACTS = {}
+        path = os.environ.get("BR_IDFACTS")
+        if path and os.path.exists(path):
+            try:
+                import pickle
+
+                with open(path, "rb") as handle:
+                    _ID_FACTS = pickle.load(handle)
+            except Exception:
+                _ID_FACTS = {}
+    return _ID_FACTS
+
+
+def build_id_facts(src: Path, out: Path) -> None:
+    """Build step: class facts for every pinned sqlglot file, so the runtime skips parse + walk."""
+    import pickle
+
+    repo = _Repo.__new__(_Repo)
+    repo.src = src
+    facts = {}
+    for path in sorted((src / "sqlglot").rglob("*.py")):
+        module = path.relative_to(src).with_suffix("").as_posix().replace("/", ".")
+        text = path.read_text(encoding="utf-8")
+        try:
+            tree = ast.parse(text)
+        except SyntaxError:
+            continue
+        local = _bindings(tree, module)
+        items = [(f"{module}.{node.name}", repo._class(node, local)) for node in tree.body if isinstance(node, ast.ClassDef)]
+        facts[str(path.relative_to(src))] = (_sha1(text), items)
+    with open(out, "wb") as handle:
+        pickle.dump(facts, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
 def _repo(src: Path, seeds: frozenset) -> _Repo:
     key = (str(src), seeds)
     repo = _REPO.get(key)
@@ -1095,7 +1222,9 @@ def _import_failures(files, src, eb, it, fp, reverse, by):
         bad = fp.import_probe(files, sqlglot_mods + test_mods)
     if not bad:
         return set(), []
-    if "sqlglot" in bad:
+    if any(name == "sqlglot" or name.startswith("sqlglot.") for name in bad):
+        # A sqlglot module that no longer imports breaks every test that reaches it lazily
+        # (dialect registry, Dialect.get_or_raise, typing walks); coverage of the module is not the bound.
         return set(eb.ALL), bad
     failed = set()
     by_file: dict = {}

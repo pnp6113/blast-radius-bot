@@ -53,6 +53,32 @@ def main() -> None:
     fp.warm(str(SRC), mods)
     fp.preset(classes)
     print("presets", fp.save_presets(str(ART / "preset_cache.pkl")), flush=True)
+    _build_extra()
+
+
+def _build_extra() -> None:
+    """astindex.pkl (old-file AST facts) and keyidx/ (key-level dict read map). Separate processes: the key map
+    must be recorded with a clean interpreter whose class-creation hook is installed before sqlglot is imported."""
+    import subprocess
+
+    py = sys.executable
+    sys.path.insert(0, str(ROOT))
+    from blast import select_p10
+
+    select_p10.build_id_facts(SRC, ART / "idfacts.pkl")
+    subprocess.run([py, str(CODE / "build_astindex.py"), str(SRC), str(ART / "astindex.pkl")], check=True)
+    tests_json = os.environ.get("BLAST_TESTS_JSON", str(ROOT / "sample" / "tests.json"))
+    seeds = os.environ.get("BLAST_KEYMAP_SEEDS", "0 12345").split()
+    workers = os.environ.get("BLAST_KEYMAP_WORKERS", str(os.cpu_count() or 4))
+    maps = []
+    for seed in seeds:
+        out = f"/tmp/keymap_{seed}.pkl"
+        env = dict(os.environ, PYTHONHASHSEED=seed)
+        subprocess.run([py, str(CODE / "build_keymap.py"), str(SRC), tests_json, out, workers], check=True, env=env)
+        maps.append(out)
+    subprocess.run([py, str(CODE / "build_keyidx.py"), str(ART / "keyidx"), *maps], check=True)
+    for out in maps:
+        os.remove(out)
 
 
 if __name__ == "__main__":
